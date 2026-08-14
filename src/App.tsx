@@ -119,7 +119,6 @@ function App() {
 
   return (
     <div className="app-shell">
-      <div className="topline"><div className="container top-inner"><span><Mail size={14} /> info@ehoome.in</span><span className="top-social"><Facebook size={14} /><Twitter size={14} /><Instagram size={14} /></span></div></div>
       <header className="site-header">
         <div className="container header-inner">
           <button className="brand" onClick={() => navigate('home')} aria-label="e Hoome IoT home"><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button>
