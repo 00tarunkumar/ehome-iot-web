@@ -1,0 +1,195 @@
+import { useEffect, useState } from 'react';
+import {
+  ArrowRight,
+  ChevronDown,
+  ChevronRight,
+  CircleHelp,
+  Cpu,
+  Factory,
+  Facebook,
+  Instagram,
+  Mail,
+  Menu,
+  Network,
+  Phone,
+  Router,
+  Search,
+  Send,
+  ShieldCheck,
+  Sparkles,
+  Twitter,
+  X,
+  Zap,
+} from 'lucide-react';
+
+type Page = 'home' | 'products' | 'gallery' | 'contact';
+
+type ProductSpec = {
+  label: string;
+  value: string;
+};
+
+type Product = {
+  category: string;
+  name: string;
+  code: string;
+  color: string;
+  specs: ProductSpec[];
+};
+
+const productSpecs = (...rows: [string, string][]): ProductSpec[] => rows.map(([label, value]) => ({ label, value }));
+
+const productCategories = [
+  { name: 'ONT Series', icon: Router, description: 'Reliable GPON connectivity for every home and business.' },
+  { name: 'OLT Series', icon: Network, description: 'High-density fiber access built for growing networks.' },
+  { name: 'Home Router Series', icon: WifiIcon, description: 'Fast, stable wireless for modern connected living.' },
+  { name: 'Switch Series', icon: Cpu, description: 'Managed and unmanaged switching for every network.' },
+  { name: 'Mi-Fi & LTE CPE Series', icon: Zap, description: 'Flexible 4G, 5G and LTE connectivity on demand.' },
+  { name: 'Access Point Series', icon: SignalIcon, description: 'Seamless wireless coverage for enterprise spaces.' },
+];
+
+const products: Product[] = [
+  { category: 'ONT Series', name: 'AC1200 GPON ONT', code: 'EC3120Z', color: 'white', specs: productSpecs(['Interfaces', '2 × 10/100/1000M Ethernet (RJ45), 1 × SC-UPC PON Interface'], ['Wi-Fi Band', 'Dual Band (2.4GHz & 5GHz)'], ['Wi-Fi Speed', '5GHz: Up to 900 Mbps | 2.4GHz: Up to 300 Mbps'], ['Management', 'Web / TELNET / TR069 / OAM / OMCI; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'ONT Series', name: 'AC1200 GPON ONT', code: 'EC3121Z', color: 'cream', specs: productSpecs(['Standards', 'ITU-T G.984 GPON Standard'], ['Interfaces', '2 × 10/100/1000M Ethernet (RJ45), 1 × SC-UPC/APC PON, 1 × FXS Voice Port'], ['Antennas', '4 × 5dBi fixed external antennas'], ['Wi-Fi Speed', '5GHz: Up to 900 Mbps | 2.4GHz: Up to 300 Mbps'], ['Protocols & Voice', 'Web / TELNET / TR069 / OAM / OMCI; IPv4/IPv6, SIP (RFC3261), G.729 / G.722 / G.711a / G.711 codecs']) },
+  { category: 'ONT Series', name: 'AC1200 GPON ONT', code: 'EC3142Z', color: 'white', specs: productSpecs(['Interfaces', '4 × 10/100/1000M Ethernet Ports (RJ45), 1 × SC-UPC PON Interface, 2 × FXS Voice Ports'], ['Wi-Fi Band', 'Dual Band (2.4GHz & 5GHz)'], ['Wi-Fi Speed', '5GHz: Up to 900 Mbps | 2.4GHz: Up to 300 Mbps'], ['Management', 'Web / TELNET / TR069 / OAM / OMCI; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'ONT Series', name: 'AC1200 GPON ONT', code: 'EC3342Z', color: 'white', specs: productSpecs(['Interfaces', '4 × 10/100/1000M Ethernet (RJ45), 1 × SC-APC PON Interface, 2 × FXS Voice Ports'], ['Wi-Fi Band', 'Dual Band (2.4GHz & 5GHz)'], ['Wi-Fi Speed', '5GHz: Up to 900 Mbps | 2.4GHz: Up to 300 Mbps'], ['Management', 'Web / TELNET / TR069 / OAM / OMCI; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'ONT Series', name: 'AX1800 GPON ONT', code: 'EC4342Z', color: 'dark', specs: productSpecs(['Wi-Fi Standard', 'Wi-Fi 6 (802.11ax)'], ['Interfaces', '4 × 10/100/1000M Ethernet (RJ45), 1 × SC-APC PON Interface, 2 × FXS Voice Ports'], ['Wi-Fi Speed', '5GHz: 1201 Mbps (802.11ax) | 2.4GHz: 574 Mbps (802.11ax)'], ['Management', 'Web / TELNET / TR069 / OAM / OMCI; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'ONT Series', name: 'N300 GPON ONT', code: 'EC2120X', color: 'white', specs: productSpecs(['Interfaces', '1 × 10/100/1000M & 1 × 10/100M Ethernet Ports (RJ45), 1 × SC-UPC PON Interface'], ['Wi-Fi Speed', '2.4GHz up to 300 Mbps'], ['Management', 'Web / TELNET / TR069 / OAM / OMCI; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'ONT Series', name: 'N300 GPON ONT', code: 'EC2121X', color: 'cream', specs: productSpecs(['Interfaces', '1 × 10/100/1000M & 1 × 10/100M Ethernet Ports (RJ45), 1 × SC-UPC PON, 1 × FXS Voice Port'], ['Wi-Fi Speed', '2.4GHz up to 300 Mbps'], ['Management', 'Web / TELNET / TR069 / OAM / OMCI; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'ONT Series', name: 'N300 GPON ONT', code: 'EC2321X', color: 'white', specs: productSpecs(['Interfaces', '1 × 10/100/1000M & 1 × 10/100M Ethernet Ports (RJ45), 1 × SC-APC PON, 1 × FXS Voice Port'], ['Wi-Fi Speed', '2.4GHz up to 300 Mbps'], ['Management', 'Web / TELNET / TR069 / OAM / OMCI; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'ONT Series', name: 'Wired GPON ONT', code: 'EC1110', color: 'white', specs: productSpecs(['Interfaces', '1 × 10/100/1000M Ethernet Port (RJ45), 1 × SC-UPC PON Interface'], ['Management', 'Web / TELNET / TR069 / OAM / OMCI; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'ONT Series', name: 'Wired GPON ONT', code: 'EC1142', color: 'silver', specs: productSpecs(['Interfaces', '4 × 10/100/1000M Ethernet Ports (RJ45), 1 × SC-UPC PON Interface, 2 × FXS Voice Ports'], ['Management', 'Web / TELNET / TR069 / OAM / OMCI; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'ONT Series', name: 'Wired GPON ONT', code: 'EC1210', color: 'silver', specs: productSpecs(['Interfaces', '1 × 10/100/1000M Ethernet Port (RJ45), 1 × SC-UPC PON Interface'], ['Management', 'Web / TELNET / TR069 / OAM / OMCI; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'OLT Series', name: '16 Port GPON OLT', code: 'EC2116P2', color: 'rack', specs: productSpecs(['Capacity', '16 GPON Ports; Maximum splitting ratio 1:128'], ['Compliance', 'Fully compliant with ITU-T G.984 / G.988'], ['Uplink & Arch', 'Supports 10G Uplink; Layer 3 functions; Dual Power Supply support'], ['Management', 'Supports EMS, CLI & Web Management']) },
+  { category: 'OLT Series', name: '8 Port GPON OLT', code: 'EC2108P2', color: 'rack', specs: productSpecs(['Capacity', '8 GPON Ports; Maximum splitting ratio 1:128'], ['Compliance', 'Fully compliant with ITU-T G.984 / G.988'], ['Uplink & Arch', 'Supports 10G Uplink; Layer 3 functions; Dual Power Supply support'], ['Management', 'Supports EMS, CLI & Web Management']) },
+  { category: 'OLT Series', name: '8 Port EPON OLT', code: 'EB1108P2', color: 'rack', specs: productSpecs(['Capacity', '8 EPON Ports; Maximum splitting ratio 1:64'], ['Compliance', 'Fully compliant with IEEE 802.3ah'], ['Uplink & Arch', 'Supports 10G Uplink; Layer 3 functions; Dual Power Supply support'], ['Management', 'Supports EMS, CLI & Web Management']) },
+  { category: 'OLT Series', name: '4 Port EPON OLT', code: 'EB1104P2', color: 'rack', specs: productSpecs(['Capacity', '4 EPON Ports; Maximum splitting ratio 1:64'], ['Compliance', 'Fully compliant with IEEE 802.3ah'], ['Uplink & Arch', 'Supports 10G Uplink; Layer 3 functions; Dual Power Supply support'], ['Management', 'Supports EMS, CLI & Web Management']) },
+  { category: 'Switch Series', name: 'MAXXTEK Gigabit 10 Fiber Switch', code: 'MAXXTEK', color: 'rack', specs: productSpecs(['Type', 'Layer 2 Unmanaged Switch'], ['Interfaces', '8 × 10/100/1000Base-TX RJ45 Ports, 10 × 1000M SFP Slots'], ['Performance', '52 Gbps switching capacity; 40.32 Mpps forwarding rate (Store and Forward)']) },
+  { category: 'Switch Series', name: '8-Port Gigabit Lite L3 Managed Switch', code: 'MMS6710-P', color: 'rack', specs: productSpecs(['Interfaces', '8 × Gigabit PoE+ Ports, 2 × Gigabit SFP Slots'], ['PoE Budget', '130 Watts'], ['Performance', 'Backplane Throughput: 20 Gbps; Carrier-level Layer 3 routing functions']) },
+  { category: 'Switch Series', name: 'L2 Managed PoE Switch', code: 'MMS6710-P', color: 'rack', specs: productSpecs(['Interfaces', '8 × Gigabit PoE+ Ports, 2 × Gigabit SFP Slots'], ['PoE Budget', '150 Watts'], ['Performance & Features', 'Backplane Throughput: 20 Gbps; Supports STP/RSTP, Link Aggregation, Multicast, Storm Suppression, IPv6']) },
+  { category: 'Switch Series', name: '24-Port Gigabit Lite L3 Managed Switch', code: 'MMS6728-P', color: 'silver', specs: productSpecs(['Interfaces', '24 × Gigabit PoE+ Ports, 4 × Gigabit TX/SFP Combo Ports'], ['PoE Budget', '370 Watts'], ['Performance', 'Backplane Throughput: 56 Gbps; Carrier-level Layer 3 routing functions']) },
+  { category: 'Switch Series', name: '24-Port Gigabit L2+ Managed Switch', code: 'MMS6732-P', color: 'silver', specs: productSpecs(['Interfaces', '24 × Gigabit PoE+ Ports, 4 × Gigabit TX/SFP Combo Ports'], ['PoE Budget', '400 Watts'], ['Features', 'Backplane Throughput: 56 Gbps; Spanning tree protocol, Link aggregation, Multicast, IPv6']) },
+  { category: 'Switch Series', name: '8-Port Gigabit L2+ Managed Switch', code: 'MMS7710', color: 'rack', specs: productSpecs(['Interfaces', '8 × Gigabit TX Ports, 2 × Gigabit SFP Slots'], ['Routing & Design', 'Fanless Design; Backplane Throughput: 20 Gbps; Static route, RIP, OSPF, 512 routing table, IPv4/v6 dual stack, DHCP Server/Client/Relay']) },
+  { category: 'Switch Series', name: '24-Port Gigabit L2+ Managed Switch', code: 'MMS7728', color: 'silver', specs: productSpecs(['Interfaces', '24 × Gigabit TX Ports, 4 × Gigabit SFP Slots'], ['Routing & Design', 'Fanless Design; Backplane Throughput: 56 Gbps; Static route, RIP, OSPF, 512 routing table, IPv4/v6 dual stack, DHCP Server/Client/Relay']) },
+  { category: 'Switch Series', name: '24-Port Gigabit Lite L3 10G Managed Switch', code: 'MMS8728-P', color: 'silver', specs: productSpecs(['Interfaces', '24 × Gigabit PoE+ Ports, 4 × 10G SFP Combo Ports'], ['PoE Budget', '370 Watts'], ['Performance', 'Backplane Throughput: 128 Gbps; Carrier-level Layer 3 routing functions']) },
+  { category: 'Switch Series', name: '24-Port Gigabit Lite L3 10G Managed Switch', code: 'MMS8728E', color: 'silver', specs: productSpecs(['Interfaces', '24 × Gigabit Ports, 4 × 10G SFP+ Slots'], ['Performance', 'Backplane Throughput: 128 Gbps; Static route, RIP, OSPF, IPv4/v6 dual stack; Carrier-level Layer 3 routing functions']) },
+  { category: 'Home Router Series', name: 'AC1200 Router', code: 'MWE8245', color: 'white', specs: productSpecs(['Type', '1200Mbps Wireless Home Router (Wi-Fi 5)'], ['Interfaces', '1 × 10/100/1000Mbps WAN & 3 × 10/100/1000Mbps LAN Ports (RJ45)'], ['Freq & Speed', 'Dual Band (2.4GHz & 5.8GHz); Speed up to 1200 Mbps'], ['Management', 'Web / TELNET / TR069; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'Home Router Series', name: 'AX1800 Router', code: 'MWE9245', color: 'cream', specs: productSpecs(['Type', '1800Mbps Wireless Home Router (Wi-Fi 6)'], ['Interfaces', '1 × 10/100/1000Mbps WAN & 3 × 10/100/1000Mbps LAN Ports (RJ45)'], ['Freq & Speed', 'Dual Band (2.4GHz & 5.8GHz); Speed up to 1800 Mbps'], ['Management', 'Web / TELNET / TR069; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'Home Router Series', name: 'AX3000 Router', code: 'MWE1024XS', color: 'dark', specs: productSpecs(['Type', '3000Mbps Wireless Home Router (Wi-Fi 6)'], ['Interfaces', '1 × 10/100/1000Mbps WAN & 3 × 10/100/1000Mbps LAN Ports (RJ45)'], ['Freq & Speed', 'Dual Band (2.4GHz & 5.8GHz); Speed up to 3000 Mbps'], ['Management', 'Web / TELNET / TR069; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'Home Router Series', name: 'N300 Router', code: 'MWE624Y5', color: 'white', specs: productSpecs(['Type', '300Mbps Wireless Home Router (Wi-Fi 4)'], ['Interfaces', '1 × 10/100Mbps WAN & 3 × 10/100Mbps LAN Ports (RJ45)'], ['Freq & Speed', '2.4GHz Single Band; Speed up to 300 Mbps'], ['Management', 'Web / TELNET / TR069; Supports DHCP, Static IP, PPPoE']) },
+  { category: 'Mi-Fi & LTE CPE Series', name: '4G LTE CAT 4 CPE', code: 'EC4Z211X', color: 'white', specs: productSpecs(['Type', 'Desktop 4G LTE CPE Router'], ['Interfaces', '1 × LAN (10/100 Mbps adaptive), 1 × RJ11 Voice Port (VoLTE & CS Domain)'], ['Wi-Fi Specs', '2.4GHz, 2 × 2 MIMO, 802.11 b/g/n (up to 300 Mbps)'], ['Features', 'TR069 / FOTA support, SIM Lock support, Optional 4000mAh battery']) },
+  { category: 'Mi-Fi & LTE CPE Series', name: '4G LTE CAT 4 MiFi', code: 'EM42Z210Y', color: 'cream', specs: productSpecs(['Type', 'Portable 4G Mobile Pocket Hotspot'], ['Wi-Fi Specs', '2.4GHz, 1 × 1 MIMO, 802.11 b/g/n (up to 150 Mbps)'], ['Display & Power', 'LCD / Multi-color LED display; Web UI management; SIM Lock support; 2100mAh / 3000mAh Battery']) },
+  { category: 'Mi-Fi & LTE CPE Series', name: '5G CPE', code: 'EC5E422Y', color: 'dark', specs: productSpecs(['Type', 'High-Performance 5G Indoor CPE'], ['Cellular Specs', 'Built-in 5G Full-band 360° signal antenna (~50m coverage radius); Supports SA & NSA modes; 5G or 4G/LTE SIM support'], ['Wi-Fi Specs', 'Wi-Fi 6 Mobile Hotspot; Dual-band (2.4GHz & 5GHz); Supports up to 32 concurrent users; WPA3 encryption'], ['Management', 'Web GUI management & configuration']) },
+  { category: 'Access Point Series', name: 'Wi-Fi 5 AP', code: 'MAP-M801', color: 'white', specs: productSpecs(['Type', 'Indoor 802.11ac Wi-Fi 5 Dual Band Enterprise Access Point'], ['Interfaces', '2 × Full Gigabit Ethernet Ports (1 × Uplink RJ45 with 802.3af PoE, 1 × LAN RJ45)'], ['Wi-Fi & HW', '2.4GHz & 5GHz Wave2 MIMO (1200 Mbps); MediaTek MT7621A + MT7615D, 128 MB RAM, 16 MB Flash'], ['Operation & Power', 'FIT and FAT AP modes; 100+ concurrent users; Standard 48V PoE or 12V/1A DC input']) },
+  { category: 'Access Point Series', name: 'Wi-Fi 5 Outdoor AP', code: 'MAP-Q802', color: 'dark', specs: productSpecs(['Type', 'Outdoor 802.11ac Wi-Fi 5 Dual Band Enterprise Access Point'], ['Hardware & Enclosure', 'Qualcomm Chipset Solution; IP67 Waterproof Outdoor Casing'], ['Antenna & Coverage', 'External 6dBi Omni-Directional Antenna; ~200 Meters coverage radius'], ['Capacity & Power', '1200 Mbps MIMO; Supports up to 80 concurrent devices; Standard PoE or DC power input']) },
+  { category: 'Access Point Series', name: 'Wi-Fi 6 AP', code: 'MAP-M901', color: 'white', specs: productSpecs(['Type', 'Indoor 802.11ax Wi-Fi 6 Dual Band Enterprise Access Point'], ['Interfaces', '2 × Full Gigabit Ethernet Ports'], ['Wi-Fi Specs', '2.4GHz & 5GHz 802.11ax Technology; Dual-band speed up to 1800 Mbps'], ['Operation & Power', 'FIT and FAT AP modes; Adjustable TX power; 150+ concurrent users; Standard PoE / DC Supply']) },
+  { category: 'Access Point Series', name: 'Wireless Controller', code: 'MAC-M260', color: 'silver', specs: productSpecs(['Type', 'Enterprise Wireless LAN Controller (Up to 260 APs)'], ['Interfaces', 'Multi-WAN, Full Speed Gigabit Network Ports'], ['Capabilities', 'Auto AP Discovery & Centralized AP Management; Manages up to 256 AP units and 256 user accesses; Web remote management with real-time status monitoring']) },
+  { category: 'Access Point Series', name: 'Wireless Controller', code: 'MAC-M60', color: 'silver', specs: productSpecs(['Type', 'Enterprise Wireless LAN Controller (Up to 60 APs)'], ['Interfaces', 'Multi-WAN, Full Speed Gigabit Network Ports'], ['Capabilities', 'Auto AP Discovery & Centralized AP Management; Manages up to 64 AP units and 80 user accesses; Web remote management with real-time status monitoring']) },
+];
+
+const galleryImages = [
+  'https://images.pexels.com/photos/33427061/pexels-photo-33427061.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  'https://images.pexels.com/photos/5554948/pexels-photo-5554948.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  'https://images.pexels.com/photos/34221997/pexels-photo-34221997.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  'https://images.pexels.com/photos/35138560/pexels-photo-35138560.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  'https://images.pexels.com/photos/38041486/pexels-photo-38041486.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  'https://images.pexels.com/photos/860227/pexels-photo-860227.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+];
+
+function WifiIcon({ size = 26 }: { size?: number }) {
+  return <span className="wifi-mark" style={{ fontSize: size }}>⌁</span>;
+}
+
+function SignalIcon({ size = 26 }: { size?: number }) {
+  return <span className="signal-mark" style={{ fontSize: size }}>◒</span>;
+}
+
+function App() {
+  const [page, setPage] = useState<Page>('home');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('All products');
+  const [submitted, setSubmitted] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  const navigate = (nextPage: Page) => {
+    setPage(nextPage);
+    setMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <div className="app-shell">
+      <div className="topline"><div className="container top-inner"><span><Mail size={14} /> info@ehoome.in</span><span className="top-social"><Facebook size={14} /><Twitter size={14} /><Instagram size={14} /></span></div></div>
+      <header className="site-header">
+        <div className="container header-inner">
+          <button className="brand" onClick={() => navigate('home')} aria-label="e Hoome IoT home"><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button>
+          <nav className="desktop-nav"><button className={page === 'home' ? 'active' : ''} onClick={() => navigate('home')}>Home</button><button className={page === 'products' ? 'active' : ''} onClick={() => navigate('products')}>Products <ChevronDown size={14} /></button><button className={page === 'gallery' ? 'active' : ''} onClick={() => navigate('gallery')}>Photo Gallery</button><button className={page === 'contact' ? 'active' : ''} onClick={() => navigate('contact')}>Contact Us</button></nav>
+          <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu">{menuOpen ? <X /> : <Menu />}</button>
+        </div>
+        {menuOpen && <div className="mobile-menu"><button onClick={() => navigate('home')}>Home</button><button onClick={() => navigate('products')}>Products</button><button onClick={() => navigate('gallery')}>Photo Gallery</button><button onClick={() => navigate('contact')}>Contact Us</button></div>}
+      </header>
+
+      {page === 'home' && <Home navigate={navigate} />}
+      {page === 'products' && <Products activeCategory={activeCategory} setActiveCategory={setActiveCategory} navigate={navigate} onSelectProduct={setSelectedProduct} />}
+      {page === 'gallery' && <Gallery navigate={navigate} />}
+      {page === 'contact' && <Contact submitted={submitted} setSubmitted={setSubmitted} />}
+
+      {page !== 'contact' && <SupportBand navigate={navigate} />}
+      <Footer navigate={navigate} />
+      {selectedProduct && <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} onSelectProduct={setSelectedProduct} />}
+    </div>
+  );
+}
+
+function Home({ navigate }: { navigate: (page: Page) => void }) {
+  return <main>
+    <section className="hero container">
+      <div className="hero-copy"><p className="eyebrow"><Sparkles size={16} /> SMART LIVING, CONNECTED</p><h1>Connectivity that<br /><em>moves with you.</em></h1><p className="hero-text">e Hoome IoT solutions connect virtually any electronic device to the Internet for smart control and monitoring anywhere, anytime.</p><button className="button button-green" onClick={() => navigate('products')}>Explore products <ArrowRight size={18} /></button></div>
+      <div className="hero-art"><div className="art-grid" /><div className="device device-router"><div className="antenna a1" /><div className="antenna a2" /><div className="ports" /></div><div className="floating-chip chip-one">Wi-Fi 6</div><div className="floating-chip chip-two">GPON</div><div className="hero-circle">e<span>H</span></div></div>
+    </section>
+    <section className="trust-strip"><div className="container trust-inner"><span>Designed for connection</span><div><ShieldCheck size={20} /> Quality tested</div><div><Factory size={20} /> Made for scale</div><div><CircleHelp size={20} /> 24/7 support</div></div></section>
+    <section className="section container categories-section"><div className="section-heading"><div><p className="eyebrow">OUR SOLUTIONS</p><h2>Product <em>Categories</em></h2></div><button className="text-button" onClick={() => navigate('products')}>View all products <ArrowRight size={16} /></button></div><p className="section-lede">Powering better connections through thoughtfully designed networking solutions.</p><div className="category-grid">{productCategories.map(({ name, icon: Icon, description }, index) => <button className="category-card" key={name} onClick={() => navigate('products')}><span className="category-number">0{index + 1}</span><div className="category-icon"><Icon size={28} /></div><h3>{name}</h3><p>{description}</p><span className="card-link">Explore <ChevronRight size={16} /></span></button>)}</div></section>
+    <section className="overview-section"><div className="container overview-grid"><div><p className="eyebrow">THE E HOOME DIFFERENCE</p><h2>Built for a world<br />that never <em>disconnects.</em></h2></div><div className="overview-copy"><p>e Hoome IoT was established in 2019 as an EMS oriented communication equipment manufacturer. We make connectivity simple, reliable and accessible.</p><div className="mini-stats"><div><strong>50+</strong><span>Products</span></div><div><strong>500+</strong><span>Happy customers</span></div><div><strong>10+</strong><span>Services</span></div></div></div></div></section>
+    <section className="feature-section container"><div className="feature-image"><img src={galleryImages[1]} alt="Electronics production line" /></div><div className="feature-copy"><p className="eyebrow">CAPABILITY IN MOTION</p><h2>From first signal to <em>full scale.</em></h2><p>Our complete manufacturing ecosystem covers design, development, testing, assembly and ongoing product support.</p><button className="text-button" onClick={() => navigate('gallery')}>Discover our factory <ArrowRight size={16} /></button></div></section>
+  </main>;
+}
+
+function Products({ activeCategory, setActiveCategory, navigate, onSelectProduct }: { activeCategory: string; setActiveCategory: (category: string) => void; navigate: (page: Page) => void; onSelectProduct: (product: Product) => void }) {
+  const filtered = activeCategory === 'All products' ? products : products.filter((product) => product.category === activeCategory);
+  return <main><section className="page-intro"><div className="container"><p className="eyebrow">PRODUCTS & SOLUTIONS</p><h1>Everything you need to<br /><em>stay connected.</em></h1><p>Explore our range of intelligent networking products, made to work beautifully together.</p></div></section><section className="container product-browser"><div className="filter-row"><div className="filter-scroll"><button className={activeCategory === 'All products' ? 'selected' : ''} onClick={() => setActiveCategory('All products')}>All products</button>{productCategories.map(({ name }) => <button key={name} className={activeCategory === name ? 'selected' : ''} onClick={() => setActiveCategory(name)}>{name}</button>)}</div><button className="search-button"><Search size={18} /> Search</button></div><div className="product-grid">{filtered.map((product) => <ProductCard product={product} key={`${product.name}-${product.code}`} onSelect={onSelectProduct} />)}</div></section><section className="product-note container"><div><p className="eyebrow">NEED A CUSTOM SOLUTION?</p><h2>Let's find the right fit<br />for your <em>network.</em></h2></div><button className="button button-dark" onClick={() => navigate('contact')}>Talk to our team <ArrowRight size={18} /></button></section></main>;
+}
+
+function ProductCard({ product, onSelect }: { product: Product; onSelect: (product: Product) => void }) {
+  return <article className="product-card" onClick={() => onSelect(product)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') onSelect(product); }} role="button" tabIndex={0}><div className={`product-visual ${product.color}`}><div className="product-device"><span className="device-lights" /><span className="device-ports" /></div>{product.color === 'white' || product.color === 'cream' ? <><i className="product-antenna left" /><i className="product-antenna right" /></> : null}</div><div className="product-info"><p>{product.category}</p><h3>{product.name}</h3><span>{product.code}</span><button aria-label={`View ${product.name}`} onClick={(event) => { event.stopPropagation(); onSelect(product); }}><ArrowRight size={16} /></button></div></article>;
+}
+
+function ProductModal({ product, onClose, onSelectProduct }: { product: Product; onClose: () => void; onSelectProduct: (product: Product) => void }) {
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', closeOnEscape);
+    return () => { document.body.style.overflow = ''; window.removeEventListener('keydown', closeOnEscape); };
+  }, [onClose]);
+
+  const relatedProducts = products.filter((item) => item !== product && item.category === product.category).slice(0, 3);
+
+  return <div className="product-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><section className="product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-title"><button className="modal-close" onClick={onClose} aria-label="Close product details"><X size={19} /></button><div className="modal-breadcrumb">Home / {product.category} / {product.name} ({product.code})</div><div className="product-detail-top"><div className={`detail-visual ${product.color}`}><div className="detail-glow" /><div className="detail-device"><i className="detail-antenna left" /><i className="detail-antenna right" /><div className="detail-logo">e H</div><div className="detail-panel" /><div className="detail-ports" /></div><span className="zoom-label">⌕ &nbsp; View product</span></div><div className="detail-copy"><p className="eyebrow">{product.category}</p><h2 id="product-modal-title">{product.name} <em>({product.code})</em></h2><ul className="spec-list">{product.specs.map((spec) => <li key={spec.label}><strong>{spec.label}:</strong> {spec.value}</li>)}</ul><button className="button button-green">Download datasheet <ArrowRight size={16} /></button></div></div><div className="reviews-panel"><div className="reviews-heading"><strong>Reviews (0)</strong><span /></div><h3>Reviews</h3><p>There are no reviews yet.</p><p>Be the first to review “{product.name} ({product.code})”<br />Your email address will not be published. Required fields are marked *</p><label>Your rating * <span className="stars">☆ ☆ ☆ ☆ ☆</span></label><textarea placeholder="Your review *" rows={4} /><div className="review-fields"><input placeholder="Name *" /><input type="email" placeholder="Email *" /></div><label className="save-review"><input type="checkbox" /> Save my name, email, and website in this browser for the next time I comment.</label><button className="review-submit">Submit</button></div><div className="related-products"><p className="eyebrow">RELATED PRODUCTS</p><div className="related-grid">{relatedProducts.map((related) => <button className="related-card" key={`${related.name}-${related.code}`} onClick={() => onSelectProduct(related)}><div className={`product-visual ${related.color}`}><div className="product-device" /></div><strong>{related.name}</strong><span>({related.code})</span></button>)}</div></div></section></div>;
+}
+
+function Gallery({ navigate }: { navigate: (page: Page) => void }) {
+  return <main><section className="gallery-hero"><img src={galleryImages[3]} alt="Technology exhibition" /><div className="gallery-overlay"><div className="container"><p className="eyebrow">INSIDE E HOOME</p><h1>Ideas in motion.<br /><em>People in sync.</em></h1><p>From factory floors to global exhibitions, see the people and places behind every connection.</p></div></div></section><section className="container gallery-section"><div className="section-heading"><div><p className="eyebrow">PHOTO GALLERY</p><h2>See us <em>in action.</em></h2></div><button className="text-button" onClick={() => navigate('contact')}>Partner with us <ArrowRight size={16} /></button></div><div className="gallery-grid">{galleryImages.map((image, index) => <figure className={index === 0 ? 'wide' : ''} key={image}><img src={image} alt="e Hoome IoT gallery" /><figcaption>{index % 2 === 0 ? 'Factory View' : 'Exhibition View'} <span>0{index + 1}</span></figcaption></figure>)}</div></section></main>;
+}
+
+function Contact({ submitted, setSubmitted }: { submitted: boolean; setSubmitted: (value: boolean) => void }) {
+  return <main><section className="page-intro contact-intro"><div className="container"><p className="eyebrow">WE'RE HERE TO HELP</p><h1>Let's start a<br /><em>conversation.</em></h1><p>Have a question, product enquiry or partnership idea? Our team is ready to listen.</p></div></section><section className="container contact-grid"><div className="contact-details"><p className="eyebrow">CONTACT DETAILS</p><h2>Reach out <em>directly.</em></h2><div className="detail-item"><Mail size={20} /><div><strong>Email</strong><span>info@ehoome.in</span></div></div><div className="detail-item"><Phone size={20} /><div><strong>Phone</strong><span>+91 33-22894255 / 56</span></div></div><div className="detail-item"><Factory size={20} /><div><strong>Registered Office</strong><span>Premlata, 39C, Shakespeare Sarani, Mullick Bazar, Park Street area, Kolkata, West Bengal 700017</span></div></div><div className="contact-hours"><span>Customer support</span><strong>Open 24/7 for help</strong></div></div><div className="contact-form-wrap"><p className="eyebrow">QUICK CONTACT</p><h2>Tell us what you <em>need.</em></h2>{submitted ? <div className="success-message"><ShieldCheck size={30} /><h3>Thank you for reaching out.</h3><p>We’ll be in touch shortly.</p></div> : <form onSubmit={(event) => { event.preventDefault(); setSubmitted(true); }}><div className="form-row"><input required placeholder="Name" /><input required type="email" placeholder="Email" /></div><div className="form-row"><input placeholder="Phone No." /><input placeholder="Company Name" /></div><select defaultValue=""><option value="" disabled>Select Product</option><option>ONT Series</option><option>OLT Series</option><option>Switch Series</option></select><textarea required placeholder="Message" rows={5} /><button className="button button-green" type="submit">Submit now <Send size={16} /></button></form>}</div></section><section className="container office-section"><p className="eyebrow">OUR LOCATIONS</p><h2>Find us in <em>person.</em></h2><div className="office-cards"><div className="office-card"><span>Registered Office</span><strong>Premlata, 39C, Shakespeare Sarani, Mullick Bazar, Park Street area, Kolkata, West Bengal 700017</strong><div className="office-map"><iframe title="Registered Office Map" src="https://www.google.com/maps?q=Premlata%2C%2039C%2C%20Shakespeare%20Sarani%2C%20Mullick%20Bazar%2C%20Park%20Street%20area%2C%20Kolkata%2C%20West%20Bengal%20700017&output=embed" loading="lazy" referrerPolicy="no-referrer-when-downgrade" /></div></div><div className="office-card"><span>Development Centre</span><strong>D Block, Sector 39, Noida, Uttar Pradesh 201303</strong><div className="office-map"><iframe title="Development Centre Map" src="https://www.google.com/maps?q=D%20Block%2C%20Sector%2039%2C%20Noida%2C%20Uttar%20Pradesh%20201303&output=embed" loading="lazy" referrerPolicy="no-referrer-when-downgrade" /></div></div></div></section></main>;
+}
+
+function SupportBand({ navigate }: { navigate: (page: Page) => void }) {
+  return <section className="support-band"><div className="container support-inner"><div><p className="eyebrow">OPEN 24/7 SUPPORT FOR HELP</p><h2>Call for support.<br /><em>We are ready to help you.</em></h2></div><button className="button button-white" onClick={() => navigate('contact')}>Contact now <ArrowRight size={17} /></button></div></section>;
+}
+
+function Footer({ navigate }: { navigate: (page: Page) => void }) {
+  return <footer><div className="container footer-grid"><div className="footer-brand"><button className="brand light" onClick={() => navigate('home')}><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button><p>Making every connection count.</p><div className="footer-social"><Facebook size={16} /><Twitter size={16} /><Instagram size={16} /></div></div><div><h4>Quick Links</h4><button onClick={() => navigate('home')}>Home</button><button onClick={() => navigate('products')}>Products</button><button onClick={() => navigate('gallery')}>Factory View</button><button onClick={() => navigate('gallery')}>Exhibition View</button><button onClick={() => navigate('contact')}>Contact Us</button></div><div><h4>Products & Solutions</h4>{productCategories.slice(0, 5).map(({ name }) => <button key={name} onClick={() => navigate('products')}>{name}</button>)}</div><div><h4>Contact</h4><p>info@ehoome.in</p><p>+91 33-22894255 / 56</p><span className="app-badges">Google Play &nbsp; App Store</span></div></div><div className="footer-bottom"><span>Copyright © 2022 e Hoome IoT Pvt Ltd. All rights reserved.</span><span>Legal Statement &nbsp; Privacy Statement &nbsp; Terms of use</span></div></footer>;
+}
+
+export default App;
