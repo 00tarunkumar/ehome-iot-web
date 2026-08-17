@@ -22,7 +22,8 @@ import {
   Zap,
 } from 'lucide-react';
 
-type Page = 'home' | 'products' | 'gallery' | 'contact';
+type Page = 'home' | 'products' | 'gallery' | 'gallery-detail' | 'contact';
+type GallerySection = 'factory' | 'delhi' | 'dubai' | null;
 
 type ProductSpec = {
   label: string;
@@ -108,7 +109,7 @@ function MagnifierImage({ src, alt, style }: { src: string; alt: string; style: 
             top: `${y - magnifierHeight / 2}px`,
             left: `${x - magnifierWidth / 2}px`,
             opacity: '1',
-            border: '2px solid rgba(255, 255, 255, 0.9)',
+            border: '1px solid rgba(255, 255, 255, 0.9)',
             backgroundColor: 'transparent',
             backgroundImage: `url('${src}')`,
             backgroundRepeat: 'no-repeat',
@@ -200,10 +201,21 @@ function App() {
   const [activeCategory, setActiveCategory] = useState('All products');
   const [submitted, setSubmitted] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
+  const [selectedGallerySection, setSelectedGallerySection] = useState<GallerySection>(null);
 
-  const navigate = (nextPage: Page) => {
+  const navigate = (nextPage: Page, gallerySection?: GallerySection) => {
     setPage(nextPage);
+    if (gallerySection) setSelectedGallerySection(gallerySection);
     setMenuOpen(false);
+    setProductsDropdownOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateWithCategory = (category: string) => {
+    setPage('products');
+    setActiveCategory(category);
+    setProductsDropdownOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -212,15 +224,16 @@ function App() {
       <header className="site-header">
         <div className="container header-inner">
           <button className="brand" onClick={() => navigate('home')} aria-label="e Hoome IoT home"><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button>
-          <nav className="desktop-nav"><button className={page === 'home' ? 'active' : ''} onClick={() => navigate('home')}>Home</button><button className={page === 'products' ? 'active' : ''} onClick={() => navigate('products')}>Products <ChevronDown size={14} /></button><button className={page === 'gallery' ? 'active' : ''} onClick={() => navigate('gallery')}>Photo Gallery</button><button className={page === 'contact' ? 'active' : ''} onClick={() => navigate('contact')}>Contact Us</button></nav>
+          <nav className="desktop-nav"><button className={page === 'home' ? 'active' : ''} onClick={() => navigate('home')}>Home</button><div className="products-nav-wrapper"><button className={page === 'products' ? 'active' : ''} onClick={() => setProductsDropdownOpen(!productsDropdownOpen)}>Products <ChevronDown size={14} style={{ transform: productsDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{productsDropdownOpen && <div className="products-dropdown"><button onClick={() => navigateWithCategory('All products')}>All products</button>{productCategories.map(({ name }) => <button key={name} onClick={() => navigateWithCategory(name)}>{name}</button>)}</div>}</div><button className={page === 'gallery' ? 'active' : ''} onClick={() => navigate('gallery')}>Photo Gallery</button><button className={page === 'contact' ? 'active' : ''} onClick={() => navigate('contact')}>Contact Us</button></nav>
           <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu">{menuOpen ? <X /> : <Menu />}</button>
         </div>
         {menuOpen && <div className="mobile-menu"><button onClick={() => navigate('home')}>Home</button><button onClick={() => navigate('products')}>Products</button><button onClick={() => navigate('gallery')}>Photo Gallery</button><button onClick={() => navigate('contact')}>Contact Us</button></div>}
       </header>
 
-      {page === 'home' && <Home navigate={navigate} />}
+      {page === 'home' && <Home navigate={navigate} setActiveCategory={setActiveCategory} />}
       {page === 'products' && <Products activeCategory={activeCategory} setActiveCategory={setActiveCategory} navigate={navigate} onSelectProduct={setSelectedProduct} />}
       {page === 'gallery' && <Gallery navigate={navigate} />}
+      {page === 'gallery-detail' && <GalleryDetail section={selectedGallerySection} navigate={navigate} />}
       {page === 'contact' && <Contact submitted={submitted} setSubmitted={setSubmitted} />}
 
       {page !== 'contact' && <SupportBand navigate={navigate} />}
@@ -230,14 +243,19 @@ function App() {
   );
 }
 
-function Home({ navigate }: { navigate: (page: Page) => void }) {
+function Home({ navigate, setActiveCategory }: { navigate: (page: Page) => void; setActiveCategory: (category: string) => void }) {
+  const navigateWithCategory = (category: string) => {
+    setActiveCategory(category);
+    navigate('products');
+  };
+
   return <main>
     <section className="hero container">
       <div className="hero-copy"><p className="eyebrow"><Sparkles size={16} /> SMART LIVING, CONNECTED</p><h1>Connectivity that<br /><em>moves with you.</em></h1><p className="hero-text">e Hoome IoT solutions connect virtually any electronic device to the Internet for smart control and monitoring anywhere, anytime.</p><button className="button button-green" onClick={() => navigate('products')}>Explore products <ArrowRight size={18} /></button></div>
       <div className="hero-art"><div className="art-grid" /><div className="device device-router"><div className="antenna a1" /><div className="antenna a2" /><div className="ports" /></div><div className="floating-chip chip-one">Wi-Fi 6</div><div className="floating-chip chip-two">GPON</div><div className="hero-circle">e<span>H</span></div></div>
     </section>
     <section className="trust-strip"><div className="container trust-inner"><span>Designed for connection</span><div><ShieldCheck size={20} /> Quality tested</div><div><Factory size={20} /> Made for scale</div><div><CircleHelp size={20} /> 24/7 support</div></div></section>
-    <section className="section container categories-section"><div className="section-heading"><div><p className="eyebrow">OUR SOLUTIONS</p><h2>Product <em>Categories</em></h2></div><button className="text-button" onClick={() => navigate('products')}>View all products <ArrowRight size={16} /></button></div><p className="section-lede">Powering better connections through thoughtfully designed networking solutions.</p><div className="category-grid">{productCategories.map(({ name, icon: Icon, description }, index) => <button className="category-card" key={name} onClick={() => navigate('products')}><span className="category-number">0{index + 1}</span><div className="category-icon"><Icon size={28} /></div><h3>{name}</h3><p>{description}</p><span className="card-link">Explore <ChevronRight size={16} /></span></button>)}</div></section>
+    <section className="section container categories-section"><div className="section-heading"><div><p className="eyebrow">OUR SOLUTIONS</p><h2>Product <em>Categories</em></h2></div><button className="text-button" onClick={() => navigate('products')}>View all products <ArrowRight size={16} /></button></div><p className="section-lede">Powering better connections through thoughtfully designed networking solutions.</p><div className="category-grid">{productCategories.map(({ name, icon: Icon, description }, index) => <button className="category-card" key={name} onClick={() => navigateWithCategory(name)}><span className="category-number">0{index + 1}</span><div className="category-icon"><Icon size={28} /></div><h3>{name}</h3><p>{description}</p><span className="card-link">Explore <ChevronRight size={16} /></span></button>)}</div></section>
     <section className="overview-section"><div className="container overview-grid"><div><p className="eyebrow">THE E HOOME DIFFERENCE</p><h2>Built for a world<br />that never <em>disconnects.</em></h2></div><div className="overview-copy"><p>e Hoome IoT was established in 2019 as an EMS oriented communication equipment manufacturer. We make connectivity simple, reliable and accessible.</p><div className="mini-stats"><div><strong>50+</strong><span>Products</span></div><div><strong>500+</strong><span>Happy customers</span></div><div><strong>2+</strong><span>Services</span></div><div><strong>150+</strong><span>Employees</span></div></div></div></div></section>
     <section className="feature-section container"><div className="feature-image"><img src={galleryImages[1]} alt="Electronics production line" /></div><div className="feature-copy"><p className="eyebrow">CAPABILITY IN MOTION</p><h2>From first signal to <em>full scale.</em></h2><p>Our complete manufacturing ecosystem covers design, development, testing, assembly and ongoing product support.</p><button className="text-button" onClick={() => navigate('gallery')}>Discover our factory <ArrowRight size={16} /></button></div></section>
   </main>;
@@ -265,8 +283,81 @@ function ProductModal({ product, onClose, onSelectProduct }: { product: Product;
   return <div className="product-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><section className="product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-title"><button className="modal-close" onClick={onClose} aria-label="Close product details"><X size={19} /></button><div className="modal-breadcrumb">Home / {product.category} / {product.name} ({product.code})</div><div className="product-detail-top"><div className={`detail-visual ${product.color}`}>{product.image ? <MagnifierImage src={product.image} alt={product.name} style={{ objectFit: 'contain' }} /> : <><div className="detail-device"><i className="detail-antenna left" /><i className="detail-antenna right" /><div className="detail-logo">e H</div><div className="detail-panel" /><div className="detail-ports" /></div></>}<span className="zoom-label">⌕ &nbsp; View product</span></div><div className="detail-copy"><p className="eyebrow">{product.category}</p><h2 id="product-modal-title">{product.name} <em>({product.code})</em></h2><ul className="spec-list">{product.specs.map((spec) => <li key={spec.label}><strong>{spec.label}:</strong> {spec.value}</li>)}</ul>{product.datasheet ? <a href={product.datasheet} target="_blank" rel="noopener noreferrer" className="button button-green" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>Download datasheet <ArrowRight size={16} /></a> : <button className="button button-green">Download datasheet <ArrowRight size={16} /></button>}</div></div><div className="reviews-panel"><div className="reviews-heading"><strong>Reviews (0)</strong><span /></div><h3>Reviews</h3><p>There are no reviews yet.</p><p>Be the first to review “{product.name} ({product.code})”<br />Your email address will not be published. Required fields are marked *</p><label>Your rating * <span className="stars">☆ ☆ ☆ ☆ ☆</span></label><textarea placeholder="Your review *" rows={4} /><div className="review-fields"><input placeholder="Name *" /><input type="email" placeholder="Email *" /></div><label className="save-review"><input type="checkbox" /> Save my name, email, and website in this browser for the next time I comment.</label><button className="review-submit">Submit</button></div><div className="related-products"><p className="eyebrow">RELATED PRODUCTS</p><div className="related-grid">{relatedProducts.map((related) => <button className="related-card" key={`${related.name}-${related.code}`} onClick={() => { onSelectProduct(related); setTimeout(() => { const backdrop = document.querySelector('.product-modal-backdrop'); if (backdrop) smoothScrollTo(backdrop, 0, 1500); }, 0); }}><div className={`product-visual ${related.color}`}>{related.image ? <img src={related.image} alt={related.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <div className="product-device" />}</div><strong>{related.name}</strong><span>({related.code})</span></button>)}</div></div></section></div>;
 }
 
-function Gallery({ navigate }: { navigate: (page: Page) => void }) {
-  return <main><section className="gallery-hero"><img src={galleryImages[3]} alt="Technology exhibition" /><div className="gallery-overlay"><div className="container"><p className="eyebrow">INSIDE E HOOME</p><h1>Ideas in motion.<br /><em>People in sync.</em></h1><p>From factory floors to global exhibitions, see the people and places behind every connection.</p></div></div></section><section className="container gallery-section"><div className="section-heading"><div><p className="eyebrow">PHOTO GALLERY</p><h2>See us <em>in action.</em></h2></div><button className="text-button" onClick={() => navigate('contact')}>Partner with us <ArrowRight size={16} /></button></div><div className="gallery-grid">{galleryImages.map((image, index) => <figure className={index === 0 ? 'wide' : ''} key={image}><img src={image} alt="e Hoome IoT gallery" /><figcaption>{index % 2 === 0 ? 'Factory View' : 'Exhibition View'} <span>0{index + 1}</span></figcaption></figure>)}</div></section></main>;
+function Gallery({ navigate }: { navigate: (page: Page, section?: GallerySection) => void }) {
+  const sections = [
+    { id: 'factory', title: 'Factory View', description: 'Behind the scenes of our manufacturing facility', color: '#4B5563' },
+    { id: 'delhi', title: 'Convergence Exhibition Delhi – 2022', description: 'Showcasing innovations at India\'s premier tech convergence', color: '#2E5090' },
+    { id: 'dubai', title: 'GITEX Exhibition Dubai – 2022', description: 'Global presence at the Middle East\'s largest tech show', color: '#8B3A3A' },
+  ];
+
+  return <main><section className="gallery-hero"><img src={galleryImages[3]} alt="Technology exhibition" /><div className="gallery-overlay"><div className="container"><p className="eyebrow">INSIDE E HOOME</p><h1>Ideas in motion.<br /><em>People in sync.</em></h1><p>From factory floors to global exhibitions, see the people and places behind every connection.</p></div></div></section><section className="container gallery-section"><div className="section-heading"><div><p className="eyebrow">PHOTO GALLERY</p><h2>See us <em>in action.</em></h2></div><button className="text-button" onClick={() => navigate('contact')}>Partner with us <ArrowRight size={16} /></button></div><div className="gallery-sections-grid">{sections.map(section => <button key={section.id} className="gallery-section-card" onClick={() => navigate('gallery-detail', section.id as GallerySection)} style={{ '--section-color': section.color } as React.CSSProperties}><div className="section-overlay" /><h3>{section.title}</h3><p>{section.description}</p><span className="card-link">View Gallery <ChevronRight size={18} /></span></button>)}</div></section></main>;
+}
+
+function GalleryDetail({ section, navigate }: { section: GallerySection; navigate: (page: Page, section?: GallerySection) => void }) {
+  const galleryData: Record<GallerySection, { title: string; images: string[] }> = {
+    factory: {
+      title: 'Factory View',
+      images: [
+        '/ehome-iot-img/Factory View/img_1.jpeg',
+        '/ehome-iot-img/Factory View/img_2.jpg',
+        '/ehome-iot-img/Factory View/img_3.jpeg',
+        '/ehome-iot-img/Factory View/img_4.jpeg',
+        '/ehome-iot-img/Factory View/img_5.jpeg',
+        '/ehome-iot-img/Factory View/img_6.jpeg',
+        '/ehome-iot-img/Factory View/img_7.jpeg',
+        '/ehome-iot-img/Factory View/img_8.jpeg',
+        '/ehome-iot-img/Factory View/img_9.jpeg',
+        '/ehome-iot-img/Factory View/img_10.jpeg',
+        '/ehome-iot-img/Factory View/img_11.jpeg',
+        '/ehome-iot-img/Factory View/img_12.jpeg',
+        '/ehome-iot-img/Factory View/img_13.jpeg',
+      ],
+    },
+    delhi: {
+      title: 'Convergence Exhibition Delhi – 2022',
+      images: [
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_1.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_2.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_3.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_4.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_5.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_6.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_7.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_8.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_9.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_10.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_11.jpeg',
+      ],
+    },
+    dubai: {
+      title: 'GITEX Exhibition Dubai – 2022',
+      images: [
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_1.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_2.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_3.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_4.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_5.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_6.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_7.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_8.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_9.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_10.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_11.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_12.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_13.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_14.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_15.jpeg',
+      ],
+    },
+    null: {
+      title: '',
+      images: [],
+    },
+  };
+
+  const data = section ? galleryData[section] : galleryData.null;
+
+  return <main><section className="gallery-detail-hero"><h1>{data.title}</h1><button className="text-button" onClick={() => navigate('gallery')}><ChevronRight size={20} style={{ transform: 'rotate(180deg)' }} /> Back to Gallery</button></section><section className="container gallery-detail-section"><div className="detail-grid">{data.images.map((image, index) => <figure key={index}><img src={image} alt={`${data.title} - ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /><figcaption><span>{index + 1}</span></figcaption></figure>)}</div></section></main>;
 }
 
 function Contact({ submitted, setSubmitted }: { submitted: boolean; setSubmitted: (value: boolean) => void }) {
