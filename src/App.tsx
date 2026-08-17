@@ -7,8 +7,6 @@ import {
   CircleHelp,
   Cpu,
   Factory,
-  Facebook,
-  Instagram,
   Mail,
   Menu,
   Network,
@@ -18,13 +16,12 @@ import {
   Send,
   ShieldCheck,
   Sparkles,
-  Twitter,
   X,
   Zap,
 } from 'lucide-react';
 
 type Page = 'home' | 'products' | 'gallery' | 'gallery-detail' | 'contact';
-type GallerySection = 'factory' | 'delhi' | 'dubai' | null;
+type GallerySection = 'factory' | 'delhi' | 'dubai';
 
 type ProductSpec = {
   label: string;
@@ -205,10 +202,10 @@ function App() {
   const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
   const [galleryDropdownOpen, setGalleryDropdownOpen] = useState(false);
   const [exhibitionDropdownOpen, setExhibitionDropdownOpen] = useState(false);
-  const [selectedGallerySection, setSelectedGallerySection] = useState<GallerySection>(null);
-  const productsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const galleryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const exhibitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [selectedGallerySection, setSelectedGallerySection] = useState<GallerySection>('factory');
+  const productsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const galleryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const exhibitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const navigate = (nextPage: Page, gallerySection?: GallerySection) => {
     setPage(nextPage);
@@ -377,7 +374,7 @@ function Gallery({ navigate }: { navigate: (page: Page, section?: GallerySection
   };
 
   useEffect(() => {
-    const intervals: NodeJS.Timeout[] = [];
+    const intervals: ReturnType<typeof setInterval>[] = [];
 
     Object.entries(sectionData).forEach(([key, data]) => {
       const interval = setInterval(() => {
@@ -398,7 +395,7 @@ function Gallery({ navigate }: { navigate: (page: Page, section?: GallerySection
     { id: 'dubai', ...sectionData.dubai, color: '#8B3A3A' },
   ];
 
-  return <main><section className="gallery-hero"><img src={galleryImages[3]} alt="Technology exhibition" /><div className="gallery-overlay"><div className="container"><p className="eyebrow">INSIDE E HOOME</p><h1>Ideas in motion.<br /><em>People in sync.</em></h1><p>From factory floors to global exhibitions, see the people and places behind every connection.</p></div></div></section><section className="container gallery-section"><div className="section-heading"><div><p className="eyebrow">PHOTO GALLERY</p><h2>See us <em>in action.</em></h2></div><button className="text-button" onClick={() => navigate('contact')}>Partner with us <ArrowRight size={16} /></button></div><div className="gallery-sections-grid">{sections.map((section, idx) => {
+  return <main><section className="gallery-hero"><img src={galleryImages[3]} alt="Technology exhibition" /><div className="gallery-overlay"><div className="container"><p className="eyebrow">INSIDE E HOOME</p><h1>Ideas in motion.<br /><em>People in sync.</em></h1><p>From factory floors to global exhibitions, see the people and places behind every connection.</p></div></div></section><section className="container gallery-section"><div className="section-heading"><div><p className="eyebrow">PHOTO GALLERY</p><h2>See us <em>in action.</em></h2></div><button className="text-button" onClick={() => navigate('contact')}>Partner with us <ArrowRight size={16} /></button></div><div className="gallery-sections-grid">{sections.map((section) => {
     const currentImageIndex = imageIndices[section.id as keyof typeof imageIndices];
     const backgroundImage = section.images[currentImageIndex];
     return <button key={section.id} className="gallery-section-card" onClick={() => navigate('gallery-detail', section.id as GallerySection)} style={{ backgroundImage: `url('${backgroundImage}')`, '--section-color': section.color } as React.CSSProperties}><div className="section-overlay" /><h3>{section.title}</h3><p>{section.description}</p><span className="card-link">View Gallery <ChevronRight size={18} /></span></button>;
@@ -475,17 +472,9 @@ function GalleryDetail({ section, navigate }: { section: GallerySection; navigat
       ],
       bannerImage: '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_1.jpeg',
     },
-    null: {
-      title: '',
-      subtitle: '',
-      description: '',
-      eyebrow: '',
-      images: [],
-      bannerImage: '',
-    },
   };
 
-  const data = section ? galleryData[section] : galleryData.null;
+  const data = galleryData[section];
 
   const handlePrevious = () => {
     if (selectedImageIndex !== null && selectedImageIndex > 0) {
@@ -515,7 +504,7 @@ function GalleryDetail({ section, navigate }: { section: GallerySection; navigat
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedImageIndex, data.images.length]);
 
-  return <main><section className="gallery-detail-hero"><img src={data.bannerImage} alt={data.title} /><div className="gallery-overlay"><div className="container"><p className="eyebrow">{data.eyebrow}</p><h1>{data.title}<br /><em>{data.subtitle}</em></h1><p>{data.description}</p></div></div></section><section className="container gallery-detail-section"><div className="gallery-back-button"><button className="text-button" onClick={() => navigate('gallery')}>Back to Gallery <ArrowRight size={16} /></button></div><div className="detail-grid">{data.images.map((image, index) => <figure key={index} onClick={() => setSelectedImageIndex(index)} style={{ cursor: 'pointer' }}><img src={image} alt={`${data.title} - ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /><figcaption><span>{index + 1}</span></figcaption></figure>)}</div></section>{selectedImageIndex !== null && <div className="gallery-lightbox-backdrop" onClick={() => setSelectedImageIndex(null)}><div className="gallery-lightbox" onClick={(e) => e.stopPropagation()}><button className="lightbox-close" onClick={() => setSelectedImageIndex(null)} aria-label="Close"><X size={24} /></button><button className="lightbox-nav lightbox-prev" onClick={handlePrevious} aria-label="Previous image"><ChevronLeft size={32} /></button><div className="lightbox-image-container"><img src={data.images[selectedImageIndex]} alt={`Gallery image ${selectedImageIndex + 1}`} /></div><button className="lightbox-nav lightbox-next" onClick={handleNext} aria-label="Next image"><ChevronRight size={32} /></button><div className="lightbox-counter">{selectedImageIndex + 1} / {data.images.length}</div></div></div>}</main>;
+  return <main><section className="gallery-detail-hero"><img src={data.bannerImage} alt={data.title} /><div className="gallery-overlay"><div className="container"><p className="eyebrow">{data.eyebrow}</p><h1>{data.title}<br /><em>{data.subtitle}</em></h1><p>{data.description}</p></div></div></section><section className="container gallery-detail-section"><div className="gallery-back-button"><button className="text-button" onClick={() => navigate('gallery')}>Back to Gallery <ArrowRight size={16} /></button></div><div className="detail-grid">{data.images.map((image: string, index: number) => <figure key={index} onClick={() => setSelectedImageIndex(index)} style={{ cursor: 'pointer' }}><img src={image} alt={`${data.title} - ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /><figcaption><span>{index + 1}</span></figcaption></figure>)}</div></section>{selectedImageIndex !== null && <div className="gallery-lightbox-backdrop" onClick={() => setSelectedImageIndex(null)}><div className="gallery-lightbox" onClick={(e) => e.stopPropagation()}><button className="lightbox-close" onClick={() => setSelectedImageIndex(null)} aria-label="Close"><X size={24} /></button><button className="lightbox-nav lightbox-prev" onClick={handlePrevious} aria-label="Previous image"><ChevronLeft size={32} /></button><div className="lightbox-image-container"><img src={data.images[selectedImageIndex]} alt={`Gallery image ${selectedImageIndex + 1}`} /></div><button className="lightbox-nav lightbox-next" onClick={handleNext} aria-label="Next image"><ChevronRight size={32} /></button><div className="lightbox-counter">{selectedImageIndex + 1} / {data.images.length}</div></div></div>}</main>;
 }
 
 function Contact({ submitted, setSubmitted }: { submitted: boolean; setSubmitted: (value: boolean) => void }) {
@@ -527,7 +516,7 @@ function SupportBand({ navigate }: { navigate: (page: Page) => void }) {
 }
 
 function Footer({ navigate }: { navigate: (page: Page) => void }) {
-  return <footer><div className="container footer-grid"><div className="footer-brand"><button className="brand light" onClick={() => navigate('home')}><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button><p>Making every connection count.</p><div className="footer-social"><Facebook size={16} /><Twitter size={16} /><Instagram size={16} /></div></div><div><h4>Quick Links</h4><button onClick={() => navigate('home')}>Home</button><button onClick={() => navigate('products')}>Products</button><button onClick={() => navigate('gallery')}>Factory View</button><button onClick={() => navigate('gallery')}>Exhibition View</button><button onClick={() => navigate('contact')}>Contact Us</button></div><div><h4>Products & Solutions</h4>{productCategories.slice(0, 5).map(({ name }) => <button key={name} onClick={() => navigate('products')}>{name}</button>)}</div><div><h4>Contact</h4><p>info@ehoome.in</p><p>+91 33-22894255 / 56</p><span className="app-badges">Google Play &nbsp; App Store</span></div></div><div className="footer-bottom"><span>Copyright © 2022 e Hoome IoT Pvt Ltd. All rights reserved.</span><span>Legal Statement &nbsp; Privacy Statement &nbsp; Terms of use</span></div></footer>;
+  return <footer><div className="container footer-grid"><div className="footer-brand"><button className="brand light" onClick={() => navigate('home')}><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button><p>Making every connection count.</p><div className="footer-social"><Mail size={16} /><Send size={16} /><Phone size={16} /></div></div><div><h4>Quick Links</h4><button onClick={() => navigate('home')}>Home</button><button onClick={() => navigate('products')}>Products</button><button onClick={() => navigate('gallery')}>Factory View</button><button onClick={() => navigate('gallery')}>Exhibition View</button><button onClick={() => navigate('contact')}>Contact Us</button></div><div><h4>Products & Solutions</h4>{productCategories.slice(0, 5).map(({ name }) => <button key={name} onClick={() => navigate('products')}>{name}</button>)}</div><div><h4>Contact</h4><p>info@ehoome.in</p><p>+91 33-22894255 / 56</p><span className="app-badges">Google Play &nbsp; App Store</span></div></div><div className="footer-bottom"><span>Copyright © 2022 e Hoome IoT Pvt Ltd. All rights reserved.</span><span>Legal Statement &nbsp; Privacy Statement &nbsp; Terms of use</span></div></footer>;
 }
 
 export default App;
