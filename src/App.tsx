@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import {
   ArrowRight,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   CircleHelp,
   Cpu,
@@ -202,13 +203,20 @@ function App() {
   const [submitted, setSubmitted] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
+  const [galleryDropdownOpen, setGalleryDropdownOpen] = useState(false);
+  const [exhibitionDropdownOpen, setExhibitionDropdownOpen] = useState(false);
   const [selectedGallerySection, setSelectedGallerySection] = useState<GallerySection>(null);
+  const productsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const galleryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const exhibitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const navigate = (nextPage: Page, gallerySection?: GallerySection) => {
     setPage(nextPage);
     if (gallerySection) setSelectedGallerySection(gallerySection);
     setMenuOpen(false);
     setProductsDropdownOpen(false);
+    setGalleryDropdownOpen(false);
+    setExhibitionDropdownOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -219,12 +227,57 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleProductsMouseEnter = () => {
+    if (productsTimeoutRef.current) clearTimeout(productsTimeoutRef.current);
+    setProductsDropdownOpen(true);
+  };
+
+  const handleProductsMouseLeave = () => {
+    if (productsTimeoutRef.current) clearTimeout(productsTimeoutRef.current);
+    productsTimeoutRef.current = setTimeout(() => {
+      setProductsDropdownOpen(false);
+    }, 3000);
+  };
+
+  const handleGalleryMouseEnter = () => {
+    if (galleryTimeoutRef.current) clearTimeout(galleryTimeoutRef.current);
+    setGalleryDropdownOpen(true);
+  };
+
+  const handleGalleryMouseLeave = () => {
+    if (galleryTimeoutRef.current) clearTimeout(galleryTimeoutRef.current);
+    galleryTimeoutRef.current = setTimeout(() => {
+      setGalleryDropdownOpen(false);
+      setExhibitionDropdownOpen(false);
+    }, 3000);
+  };
+
+  const handleExhibitionMouseEnter = () => {
+    if (exhibitionTimeoutRef.current) clearTimeout(exhibitionTimeoutRef.current);
+    setExhibitionDropdownOpen(true);
+  };
+
+  const handleExhibitionMouseLeave = () => {
+    if (exhibitionTimeoutRef.current) clearTimeout(exhibitionTimeoutRef.current);
+    exhibitionTimeoutRef.current = setTimeout(() => {
+      setExhibitionDropdownOpen(false);
+    }, 3000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (productsTimeoutRef.current) clearTimeout(productsTimeoutRef.current);
+      if (galleryTimeoutRef.current) clearTimeout(galleryTimeoutRef.current);
+      if (exhibitionTimeoutRef.current) clearTimeout(exhibitionTimeoutRef.current);
+    };
+  }, []);
+
   return (
     <div className="app-shell">
       <header className="site-header">
         <div className="container header-inner">
           <button className="brand" onClick={() => navigate('home')} aria-label="e Hoome IoT home"><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button>
-          <nav className="desktop-nav"><button className={page === 'home' ? 'active' : ''} onClick={() => navigate('home')}>Home</button><div className="products-nav-wrapper"><button className={page === 'products' ? 'active' : ''} onClick={() => setProductsDropdownOpen(!productsDropdownOpen)}>Products <ChevronDown size={14} style={{ transform: productsDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{productsDropdownOpen && <div className="products-dropdown"><button onClick={() => navigateWithCategory('All products')}>All products</button>{productCategories.map(({ name }) => <button key={name} onClick={() => navigateWithCategory(name)}>{name}</button>)}</div>}</div><button className={page === 'gallery' ? 'active' : ''} onClick={() => navigate('gallery')}>Photo Gallery</button><button className={page === 'contact' ? 'active' : ''} onClick={() => navigate('contact')}>Contact Us</button></nav>
+          <nav className="desktop-nav"><button className={page === 'home' ? 'active' : ''} onClick={() => navigate('home')}>Home</button><div className="products-nav-wrapper" onMouseEnter={handleProductsMouseEnter} onMouseLeave={handleProductsMouseLeave}><button className={page === 'products' ? 'active' : ''} onClick={() => { if (page === 'products') { setProductsDropdownOpen(!productsDropdownOpen); } else { setActiveCategory('All products'); navigate('products'); } }}>Products <ChevronDown size={14} style={{ transform: productsDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{productsDropdownOpen && <div className="products-dropdown"><button onClick={() => navigateWithCategory('All products')}>All products</button>{productCategories.map(({ name }) => <button key={name} onClick={() => navigateWithCategory(name)}>{name}</button>)}</div>}</div><div className="gallery-nav-wrapper" onMouseEnter={handleGalleryMouseEnter} onMouseLeave={handleGalleryMouseLeave}><button className={page === 'gallery' || page === 'gallery-detail' ? 'active' : ''} onClick={() => { if (page === 'gallery') { setGalleryDropdownOpen(!galleryDropdownOpen); } else { navigate('gallery'); } }}>Photo Gallery <ChevronDown size={14} style={{ transform: galleryDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{galleryDropdownOpen && <div className="gallery-dropdown"><button onClick={() => navigate('gallery-detail', 'factory')}>Factory View</button><div className="exhibition-submenu-wrapper" onMouseEnter={handleExhibitionMouseEnter} onMouseLeave={handleExhibitionMouseLeave}><button onClick={() => setExhibitionDropdownOpen(!exhibitionDropdownOpen)}>Exhibition <ChevronDown size={12} style={{ transform: exhibitionDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{exhibitionDropdownOpen && <div className="exhibition-submenu"><button onClick={() => navigate('gallery-detail', 'delhi')}>Convergence Exhibition Delhi – 2022</button><button onClick={() => navigate('gallery-detail', 'dubai')}>GITEX Exhibition Dubai – 2022</button></div>}</div></div>}</div><button className={page === 'contact' ? 'active' : ''} onClick={() => navigate('contact')}>Contact Us</button></nav>
           <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu">{menuOpen ? <X /> : <Menu />}</button>
         </div>
         {menuOpen && <div className="mobile-menu"><button onClick={() => navigate('home')}>Home</button><button onClick={() => navigate('products')}>Products</button><button onClick={() => navigate('gallery')}>Photo Gallery</button><button onClick={() => navigate('contact')}>Contact Us</button></div>}
@@ -284,16 +337,77 @@ function ProductModal({ product, onClose, onSelectProduct }: { product: Product;
 }
 
 function Gallery({ navigate }: { navigate: (page: Page, section?: GallerySection) => void }) {
+  const [imageIndices, setImageIndices] = useState({ factory: 0, delhi: 0, dubai: 0 });
+
+  const sectionData = {
+    factory: {
+      title: 'Factory View',
+      description: 'Behind the scenes of our manufacturing facility',
+      images: [
+        '/ehome-iot-img/Factory View/img_1.jpeg',
+        /* '/ehome-iot-img/Factory View/img_2.jpg', */
+        '/ehome-iot-img/Factory View/img_3.jpeg',
+        '/ehome-iot-img/Factory View/img_4.jpeg',
+        '/ehome-iot-img/Factory View/img_5.jpeg',
+        '/ehome-iot-img/Factory View/img_6.jpeg',
+      ],
+    },
+    delhi: {
+      title: 'Convergence Exhibition Delhi – 2022',
+      description: 'Showcasing innovations at India\'s premier tech convergence',
+      images: [
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_1.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_2.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_3.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_4.jpeg',
+        '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_5.jpeg',
+      ],
+    },
+    dubai: {
+      title: 'GITEX Exhibition Dubai – 2022',
+      description: 'Global presence at the Middle East\'s largest tech show',
+      images: [
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_1.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_2.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_3.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_4.jpeg',
+        '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_5.jpeg',
+      ],
+    },
+  };
+
+  useEffect(() => {
+    const intervals: NodeJS.Timeout[] = [];
+
+    Object.entries(sectionData).forEach(([key, data]) => {
+      const interval = setInterval(() => {
+        setImageIndices(prev => ({
+          ...prev,
+          [key]: (prev[key as keyof typeof prev] + 1) % data.images.length,
+        }));
+      }, 4000);
+      intervals.push(interval);
+    });
+
+    return () => intervals.forEach(clearInterval);
+  }, []);
+
   const sections = [
-    { id: 'factory', title: 'Factory View', description: 'Behind the scenes of our manufacturing facility', color: '#4B5563' },
-    { id: 'delhi', title: 'Convergence Exhibition Delhi – 2022', description: 'Showcasing innovations at India\'s premier tech convergence', color: '#2E5090' },
-    { id: 'dubai', title: 'GITEX Exhibition Dubai – 2022', description: 'Global presence at the Middle East\'s largest tech show', color: '#8B3A3A' },
+    { id: 'factory', ...sectionData.factory, color: '#4B5563' },
+    { id: 'delhi', ...sectionData.delhi, color: '#2E5090' },
+    { id: 'dubai', ...sectionData.dubai, color: '#8B3A3A' },
   ];
 
-  return <main><section className="gallery-hero"><img src={galleryImages[3]} alt="Technology exhibition" /><div className="gallery-overlay"><div className="container"><p className="eyebrow">INSIDE E HOOME</p><h1>Ideas in motion.<br /><em>People in sync.</em></h1><p>From factory floors to global exhibitions, see the people and places behind every connection.</p></div></div></section><section className="container gallery-section"><div className="section-heading"><div><p className="eyebrow">PHOTO GALLERY</p><h2>See us <em>in action.</em></h2></div><button className="text-button" onClick={() => navigate('contact')}>Partner with us <ArrowRight size={16} /></button></div><div className="gallery-sections-grid">{sections.map(section => <button key={section.id} className="gallery-section-card" onClick={() => navigate('gallery-detail', section.id as GallerySection)} style={{ '--section-color': section.color } as React.CSSProperties}><div className="section-overlay" /><h3>{section.title}</h3><p>{section.description}</p><span className="card-link">View Gallery <ChevronRight size={18} /></span></button>)}</div></section></main>;
+  return <main><section className="gallery-hero"><img src={galleryImages[3]} alt="Technology exhibition" /><div className="gallery-overlay"><div className="container"><p className="eyebrow">INSIDE E HOOME</p><h1>Ideas in motion.<br /><em>People in sync.</em></h1><p>From factory floors to global exhibitions, see the people and places behind every connection.</p></div></div></section><section className="container gallery-section"><div className="section-heading"><div><p className="eyebrow">PHOTO GALLERY</p><h2>See us <em>in action.</em></h2></div><button className="text-button" onClick={() => navigate('contact')}>Partner with us <ArrowRight size={16} /></button></div><div className="gallery-sections-grid">{sections.map((section, idx) => {
+    const currentImageIndex = imageIndices[section.id as keyof typeof imageIndices];
+    const backgroundImage = section.images[currentImageIndex];
+    return <button key={section.id} className="gallery-section-card" onClick={() => navigate('gallery-detail', section.id as GallerySection)} style={{ backgroundImage: `url('${backgroundImage}')`, '--section-color': section.color } as React.CSSProperties}><div className="section-overlay" /><h3>{section.title}</h3><p>{section.description}</p><span className="card-link">View Gallery <ChevronRight size={18} /></span></button>;
+  })}</div></section></main>;
 }
 
 function GalleryDetail({ section, navigate }: { section: GallerySection; navigate: (page: Page, section?: GallerySection) => void }) {
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+
   const galleryData: Record<GallerySection, { title: string; subtitle: string; description: string; eyebrow: string; images: string[]; bannerImage: string }> = {
     factory: {
       title: 'Behind the scenes.',
@@ -302,7 +416,7 @@ function GalleryDetail({ section, navigate }: { section: GallerySection; navigat
       eyebrow: 'INSIDE E HOOME',
       images: [
         '/ehome-iot-img/Factory View/img_1.jpeg',
-        '/ehome-iot-img/Factory View/img_2.jpg',
+        /* '/ehome-iot-img/Factory View/img_2.jpg',*/
         '/ehome-iot-img/Factory View/img_3.jpeg',
         '/ehome-iot-img/Factory View/img_4.jpeg',
         '/ehome-iot-img/Factory View/img_5.jpeg',
@@ -335,7 +449,7 @@ function GalleryDetail({ section, navigate }: { section: GallerySection; navigat
         '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_10.jpeg',
         '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_11.jpeg',
       ],
-      bannerImage: '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_1.jpeg',
+      bannerImage: '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_4.jpeg',
     },
     dubai: {
       title: 'Global presence.',
@@ -373,7 +487,35 @@ function GalleryDetail({ section, navigate }: { section: GallerySection; navigat
 
   const data = section ? galleryData[section] : galleryData.null;
 
-  return <main><section className="gallery-detail-hero"><img src={data.bannerImage} alt={data.title} /><div className="gallery-overlay"><div className="container"><p className="eyebrow">{data.eyebrow}</p><h1>{data.title}<br /><em>{data.subtitle}</em></h1><p>{data.description}</p></div></div></section><section className="container gallery-detail-section"><div className="gallery-detail-heading"><div><h2>View the gallery.<br /><em>Explore every moment.</em></h2></div><button className="text-button" onClick={() => navigate('gallery')}>Back to Gallery <ArrowRight size={16} /></button></div><div className="detail-grid">{data.images.map((image, index) => <figure key={index}><img src={image} alt={`${data.title} - ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /><figcaption><span>{index + 1}</span></figcaption></figure>)}</div></section></main>;
+  const handlePrevious = () => {
+    if (selectedImageIndex !== null && selectedImageIndex > 0) {
+      setSelectedImageIndex(selectedImageIndex - 1);
+    } else if (selectedImageIndex === 0) {
+      setSelectedImageIndex(data.images.length - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (selectedImageIndex !== null && selectedImageIndex < data.images.length - 1) {
+      setSelectedImageIndex(selectedImageIndex + 1);
+    } else if (selectedImageIndex === data.images.length - 1) {
+      setSelectedImageIndex(0);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedImageIndex !== null) {
+        if (e.key === 'ArrowLeft') handlePrevious();
+        if (e.key === 'ArrowRight') handleNext();
+        if (e.key === 'Escape') setSelectedImageIndex(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedImageIndex, data.images.length]);
+
+  return <main><section className="gallery-detail-hero"><img src={data.bannerImage} alt={data.title} /><div className="gallery-overlay"><div className="container"><p className="eyebrow">{data.eyebrow}</p><h1>{data.title}<br /><em>{data.subtitle}</em></h1><p>{data.description}</p></div></div></section><section className="container gallery-detail-section"><div className="gallery-back-button"><button className="text-button" onClick={() => navigate('gallery')}>Back to Gallery <ArrowRight size={16} /></button></div><div className="detail-grid">{data.images.map((image, index) => <figure key={index} onClick={() => setSelectedImageIndex(index)} style={{ cursor: 'pointer' }}><img src={image} alt={`${data.title} - ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /><figcaption><span>{index + 1}</span></figcaption></figure>)}</div></section>{selectedImageIndex !== null && <div className="gallery-lightbox-backdrop" onClick={() => setSelectedImageIndex(null)}><div className="gallery-lightbox" onClick={(e) => e.stopPropagation()}><button className="lightbox-close" onClick={() => setSelectedImageIndex(null)} aria-label="Close"><X size={24} /></button><button className="lightbox-nav lightbox-prev" onClick={handlePrevious} aria-label="Previous image"><ChevronLeft size={32} /></button><div className="lightbox-image-container"><img src={data.images[selectedImageIndex]} alt={`Gallery image ${selectedImageIndex + 1}`} /></div><button className="lightbox-nav lightbox-next" onClick={handleNext} aria-label="Next image"><ChevronRight size={32} /></button><div className="lightbox-counter">{selectedImageIndex + 1} / {data.images.length}</div></div></div>}</main>;
 }
 
 function Contact({ submitted, setSubmitted }: { submitted: boolean; setSubmitted: (value: boolean) => void }) {
