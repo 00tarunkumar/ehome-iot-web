@@ -625,7 +625,7 @@ em {
 }
 
 .product-visual {
-    height: 205px;
+    height: 280px;
     display: grid;
     place-items: center;
     position: relative;
@@ -639,7 +639,7 @@ em {
     width: 145px;
     height: 145px;
     border-radius: 50%;
-    background: #e6eee5;
+    background: transparent;
 }
 
 .product-visual.dark {
@@ -811,7 +811,7 @@ em {
 }
 
 .detail-visual {
-    height: 350px;
+    height: 450px;
     display: grid;
     place-items: center;
     position: relative;
@@ -825,7 +825,7 @@ em {
     width: 280px;
     height: 280px;
     border-radius: 50%;
-    background: #e8f0e6;
+    background: transparent;
 }
 
 .detail-visual.dark,
@@ -1078,7 +1078,7 @@ em {
 }
 
 .related-card .product-visual {
-    height: 170px;
+    height: 220px;
 }
 
 .related-card strong,
