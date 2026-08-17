@@ -294,9 +294,12 @@ function Gallery({ navigate }: { navigate: (page: Page, section?: GallerySection
 }
 
 function GalleryDetail({ section, navigate }: { section: GallerySection; navigate: (page: Page, section?: GallerySection) => void }) {
-  const galleryData: Record<GallerySection, { title: string; images: string[] }> = {
+  const galleryData: Record<GallerySection, { title: string; subtitle: string; description: string; eyebrow: string; images: string[]; bannerImage: string }> = {
     factory: {
-      title: 'Factory View',
+      title: 'Behind the scenes.',
+      subtitle: 'Our manufacturing excellence.',
+      description: 'Experience the precision and quality of our state-of-the-art manufacturing facility where innovation meets excellence.',
+      eyebrow: 'INSIDE E HOOME',
       images: [
         '/ehome-iot-img/Factory View/img_1.jpeg',
         '/ehome-iot-img/Factory View/img_2.jpg',
@@ -312,9 +315,13 @@ function GalleryDetail({ section, navigate }: { section: GallerySection; navigat
         '/ehome-iot-img/Factory View/img_12.jpeg',
         '/ehome-iot-img/Factory View/img_13.jpeg',
       ],
+      bannerImage: '/ehome-iot-img/Factory View/img_1.jpeg',
     },
     delhi: {
-      title: 'Convergence Exhibition Delhi – 2022',
+      title: 'Innovation in motion.',
+      subtitle: 'Convergence Exhibition Delhi – 2022',
+      description: 'Showcasing our cutting-edge solutions at India\'s premier technology convergence event, connecting ideas with industry leaders.',
+      eyebrow: 'INSIDE E HOOME',
       images: [
         '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_1.jpeg',
         '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_2.jpeg',
@@ -328,9 +335,13 @@ function GalleryDetail({ section, navigate }: { section: GallerySection; navigat
         '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_10.jpeg',
         '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_11.jpeg',
       ],
+      bannerImage: '/ehome-iot-img/Convergence Exhibition Delhi – 2022/img_1.jpeg',
     },
     dubai: {
-      title: 'GITEX Exhibition Dubai – 2022',
+      title: 'Global presence.',
+      subtitle: 'GITEX Exhibition Dubai – 2022',
+      description: 'Leading innovation at the Middle East\'s largest technology show, connecting with global partners and showcasing our world-class solutions.',
+      eyebrow: 'INSIDE E HOOME',
       images: [
         '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_1.jpeg',
         '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_2.jpeg',
@@ -348,16 +359,21 @@ function GalleryDetail({ section, navigate }: { section: GallerySection; navigat
         '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_14.jpeg',
         '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_15.jpeg',
       ],
+      bannerImage: '/ehome-iot-img/GITEX Exhibition Dubai – 2022/img_1.jpeg',
     },
     null: {
       title: '',
+      subtitle: '',
+      description: '',
+      eyebrow: '',
       images: [],
+      bannerImage: '',
     },
   };
 
   const data = section ? galleryData[section] : galleryData.null;
 
-  return <main><section className="gallery-detail-hero"><h1>{data.title}</h1><button className="text-button" onClick={() => navigate('gallery')}><ChevronRight size={20} style={{ transform: 'rotate(180deg)' }} /> Back to Gallery</button></section><section className="container gallery-detail-section"><div className="detail-grid">{data.images.map((image, index) => <figure key={index}><img src={image} alt={`${data.title} - ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /><figcaption><span>{index + 1}</span></figcaption></figure>)}</div></section></main>;
+  return <main><section className="gallery-detail-hero"><img src={data.bannerImage} alt={data.title} /><div className="gallery-overlay"><div className="container"><p className="eyebrow">{data.eyebrow}</p><h1>{data.title}<br /><em>{data.subtitle}</em></h1><p>{data.description}</p></div></div></section><section className="container gallery-detail-section"><div className="gallery-detail-heading"><div><h2>View the gallery.<br /><em>Explore every moment.</em></h2></div><button className="text-button" onClick={() => navigate('gallery')}>Back to Gallery <ArrowRight size={16} /></button></div><div className="detail-grid">{data.images.map((image, index) => <figure key={index}><img src={image} alt={`${data.title} - ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /><figcaption><span>{index + 1}</span></figcaption></figure>)}</div></section></main>;
 }
 
 function Contact({ submitted, setSubmitted }: { submitted: boolean; setSubmitted: (value: boolean) => void }) {
