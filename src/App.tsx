@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   ArrowRight,
   ChevronDown,
@@ -40,6 +40,91 @@ type Product = {
 };
 
 const productSpecs = (...rows: [string, string][]): ProductSpec[] => rows.map(([label, value]) => ({ label, value }));
+
+function smoothScrollTo(element: Element, target: number, duration: number = 1000) {
+  const start = element.scrollTop;
+  const distance = target - start;
+  const startTime = performance.now();
+
+  const animate = (currentTime: number) => {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    element.scrollTop = start + distance * progress;
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    }
+  };
+
+  requestAnimationFrame(animate);
+}
+
+function MagnifierImage({ src, alt, style }: { src: string; alt: string; style: React.CSSProperties }) {
+  const [showMagnifier, setShowMagnifier] = useState(false);
+  const [magnifierHeight, setMagnifierHeight] = useState(100);
+  const [magnifierWidth, setMagnifierWidth] = useState(100);
+  const [imgWidth, setImgWidth] = useState(0);
+  const [imgHeight, setImgHeight] = useState(0);
+  const [[x, y], setXY] = useState([0, 0]);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const zoom = 2.5;
+
+  const mouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const { width, height } = el.getBoundingClientRect();
+    setImgWidth(width);
+    setImgHeight(height);
+    setMagnifierHeight(height / 2);
+    setMagnifierWidth(width / 2);
+    setShowMagnifier(true);
+  };
+
+  const mouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const { top, left } = el.getBoundingClientRect();
+    const x = e.pageX - left - window.scrollX;
+    const y = e.pageY - top - window.scrollY;
+    setXY([x, y]);
+  };
+
+  const mouseLeave = () => {
+    setShowMagnifier(false);
+  };
+
+  return (
+    <div
+      onMouseEnter={mouseEnter}
+      onMouseMove={mouseMove}
+      onMouseLeave={mouseLeave}
+      style={{ position: 'relative', display: 'inline-block', width: '100%', height: '100%' }}
+    >
+      <img ref={imgRef} src={src} alt={alt} style={{ ...style, display: 'block', width: '100%', height: '100%' }} />
+      {showMagnifier && (
+        <div
+          style={{
+            display: 'block',
+            position: 'absolute',
+            height: `${magnifierHeight}px`,
+            width: `${magnifierWidth}px`,
+            top: `${y - magnifierHeight / 2}px`,
+            left: `${x - magnifierWidth / 2}px`,
+            opacity: '1',
+            border: '2px solid rgba(255, 255, 255, 0.9)',
+            backgroundColor: 'transparent',
+            backgroundImage: `url('${src}')`,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: `${imgWidth * zoom}px ${imgHeight * zoom}px`,
+            backgroundPositionX: `${-x * zoom + magnifierWidth / 2}px`,
+            backgroundPositionY: `${-y * zoom + magnifierHeight / 2}px`,
+            borderRadius: '50%',
+            boxShadow: '0 0 0 6px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.3)',
+            pointerEvents: 'none',
+            zIndex: 10,
+          }}
+        />
+      )}
+    </div>
+  );
+}
 
 const productCategories = [
   { name: 'ONT Series', icon: Router, description: 'Reliable GPON connectivity for every home and business.' },
@@ -177,7 +262,7 @@ function ProductModal({ product, onClose, onSelectProduct }: { product: Product;
 
   const relatedProducts = products.filter((item) => item !== product && item.category === product.category).slice(0, 3);
 
-  return <div className="product-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><section className="product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-title"><button className="modal-close" onClick={onClose} aria-label="Close product details"><X size={19} /></button><div className="modal-breadcrumb">Home / {product.category} / {product.name} ({product.code})</div><div className="product-detail-top"><div className={`detail-visual ${product.color}`}>{product.image ? <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <><div className="detail-device"><i className="detail-antenna left" /><i className="detail-antenna right" /><div className="detail-logo">e H</div><div className="detail-panel" /><div className="detail-ports" /></div></>}<span className="zoom-label">⌕ &nbsp; View product</span></div><div className="detail-copy"><p className="eyebrow">{product.category}</p><h2 id="product-modal-title">{product.name} <em>({product.code})</em></h2><ul className="spec-list">{product.specs.map((spec) => <li key={spec.label}><strong>{spec.label}:</strong> {spec.value}</li>)}</ul>{product.datasheet ? <a href={product.datasheet} target="_blank" rel="noopener noreferrer" className="button button-green" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>Download datasheet <ArrowRight size={16} /></a> : <button className="button button-green">Download datasheet <ArrowRight size={16} /></button>}</div></div><div className="reviews-panel"><div className="reviews-heading"><strong>Reviews (0)</strong><span /></div><h3>Reviews</h3><p>There are no reviews yet.</p><p>Be the first to review “{product.name} ({product.code})”<br />Your email address will not be published. Required fields are marked *</p><label>Your rating * <span className="stars">☆ ☆ ☆ ☆ ☆</span></label><textarea placeholder="Your review *" rows={4} /><div className="review-fields"><input placeholder="Name *" /><input type="email" placeholder="Email *" /></div><label className="save-review"><input type="checkbox" /> Save my name, email, and website in this browser for the next time I comment.</label><button className="review-submit">Submit</button></div><div className="related-products"><p className="eyebrow">RELATED PRODUCTS</p><div className="related-grid">{relatedProducts.map((related) => <button className="related-card" key={`${related.name}-${related.code}`} onClick={() => onSelectProduct(related)}><div className={`product-visual ${related.color}`}>{related.image ? <img src={related.image} alt={related.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <div className="product-device" />}</div><strong>{related.name}</strong><span>({related.code})</span></button>)}</div></div></section></div>;
+  return <div className="product-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><section className="product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-title"><button className="modal-close" onClick={onClose} aria-label="Close product details"><X size={19} /></button><div className="modal-breadcrumb">Home / {product.category} / {product.name} ({product.code})</div><div className="product-detail-top"><div className={`detail-visual ${product.color}`}>{product.image ? <MagnifierImage src={product.image} alt={product.name} style={{ objectFit: 'contain' }} /> : <><div className="detail-device"><i className="detail-antenna left" /><i className="detail-antenna right" /><div className="detail-logo">e H</div><div className="detail-panel" /><div className="detail-ports" /></div></>}<span className="zoom-label">⌕ &nbsp; View product</span></div><div className="detail-copy"><p className="eyebrow">{product.category}</p><h2 id="product-modal-title">{product.name} <em>({product.code})</em></h2><ul className="spec-list">{product.specs.map((spec) => <li key={spec.label}><strong>{spec.label}:</strong> {spec.value}</li>)}</ul>{product.datasheet ? <a href={product.datasheet} target="_blank" rel="noopener noreferrer" className="button button-green" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>Download datasheet <ArrowRight size={16} /></a> : <button className="button button-green">Download datasheet <ArrowRight size={16} /></button>}</div></div><div className="reviews-panel"><div className="reviews-heading"><strong>Reviews (0)</strong><span /></div><h3>Reviews</h3><p>There are no reviews yet.</p><p>Be the first to review “{product.name} ({product.code})”<br />Your email address will not be published. Required fields are marked *</p><label>Your rating * <span className="stars">☆ ☆ ☆ ☆ ☆</span></label><textarea placeholder="Your review *" rows={4} /><div className="review-fields"><input placeholder="Name *" /><input type="email" placeholder="Email *" /></div><label className="save-review"><input type="checkbox" /> Save my name, email, and website in this browser for the next time I comment.</label><button className="review-submit">Submit</button></div><div className="related-products"><p className="eyebrow">RELATED PRODUCTS</p><div className="related-grid">{relatedProducts.map((related) => <button className="related-card" key={`${related.name}-${related.code}`} onClick={() => { onSelectProduct(related); setTimeout(() => { const backdrop = document.querySelector('.product-modal-backdrop'); if (backdrop) smoothScrollTo(backdrop, 0, 1500); }, 0); }}><div className={`product-visual ${related.color}`}>{related.image ? <img src={related.image} alt={related.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <div className="product-device" />}</div><strong>{related.name}</strong><span>({related.code})</span></button>)}</div></div></section></div>;
 }
 
 function Gallery({ navigate }: { navigate: (page: Page) => void }) {

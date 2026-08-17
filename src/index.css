@@ -1075,6 +1075,14 @@ em {
     background: #fff;
     border: 1px solid var(--line);
     padding: 0 0 15px;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.related-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(25, 46, 32, .1);
+    border-color: var(--lime);
 }
 
 .related-card .product-visual {
