@@ -24,6 +24,7 @@ import {
   Instagram,
   Twitter,
 } from 'lucide-react';
+import { Loading } from './Loading';
 
 type Page = 'home' | 'products' | 'gallery' | 'gallery-detail' | 'contact';
 type GallerySection = 'factory' | 'delhi' | 'dubai';
@@ -208,6 +209,7 @@ function App() {
   const [galleryDropdownOpen, setGalleryDropdownOpen] = useState(false);
   const [exhibitionDropdownOpen, setExhibitionDropdownOpen] = useState(false);
   const [selectedGallerySection, setSelectedGallerySection] = useState<GallerySection>('factory');
+  const [isLoading, setIsLoading] = useState(true);
   const productsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const galleryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exhibitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -274,8 +276,14 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="app-shell">
+      {isLoading && <Loading />}
       <header className="site-header">
         <div className="container header-inner">
           <button className="brand" onClick={() => navigate('home')} aria-label="e Hoome IoT home"><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button>
