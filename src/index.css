@@ -1707,6 +1707,163 @@ textarea {
     border: 0;
 }
 
+.rma-form-section {
+    border-left: 2px solid var(--lime);
+    padding-left: 18px;
+    margin-top: 45px;
+}
+
+.rma-form-section span {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    margin-bottom: 14px;
+}
+
+.rma-button {
+    background: var(--green);
+    color: white;
+    border: 0;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.rma-button:hover {
+    background: var(--lime);
+    color: var(--ink);
+}
+
+.rma-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.rma-modal {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.rma-modal .modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 0;
+}
+
+.rma-modal .modal-close:hover {
+    color: var(--ink);
+}
+
+.rma-modal-content h2 {
+    margin: 0 0 12px 0;
+    font-size: 28px;
+}
+
+.rma-modal-content h2 em {
+    color: var(--green);
+    font-style: normal;
+}
+
+.rma-modal-content > p {
+    color: var(--muted);
+    margin-bottom: 18px;
+    font-size: 14px;
+}
+
+.download-btn {
+    display: inline-block;
+    background: var(--green);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 24px;
+    transition: background 0.3s ease;
+}
+
+.download-btn:hover {
+    background: var(--lime);
+    color: var(--ink);
+}
+
+.rma-modal form {
+    display: grid;
+    gap: 18px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-field label {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: var(--ink);
+}
+
+.form-field input,
+.form-field textarea {
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(125, 174, 34, 0.1);
+}
+
+.rma-success {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.rma-success svg {
+    color: var(--green);
+    margin-bottom: 16px;
+}
+
+.rma-success h3 {
+    font-size: 22px;
+    margin: 16px 0 8px;
+    color: var(--ink);
+}
+
+.rma-success p {
+    color: var(--muted);
+    margin: 0;
+}
+
 .support-band {
     background: var(--green);
     color: white;
