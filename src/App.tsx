@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { Loading } from './Loading';
 import { Counter } from './Counter';
+import { ImageSlideshow } from './ImageSlideshow';
 
 type Page = 'home' | 'products' | 'gallery' | 'gallery-detail' | 'contact';
 type GallerySection = 'factory' | 'delhi' | 'dubai';
@@ -313,6 +314,18 @@ function Home({ navigate, setActiveCategory }: { navigate: (page: Page) => void;
     navigate('products');
   };
 
+  const factoryImages = [
+    '/ehome-iot-img/Factory%20View/img_1.jpeg',
+    '/ehome-iot-img/Factory%20View/img_3.jpeg',
+    '/ehome-iot-img/Factory%20View/img_4.jpeg',
+    '/ehome-iot-img/Factory%20View/img_5.jpeg',
+    '/ehome-iot-img/Factory%20View/img_6.jpeg',
+    '/ehome-iot-img/Factory%20View/img_7.jpeg',
+    '/ehome-iot-img/Factory%20View/img_8.jpeg',
+    '/ehome-iot-img/Factory%20View/img_9.jpeg',
+    '/ehome-iot-img/Factory%20View/img_10.jpeg',
+  ];
+
   return <main>
     <section className="hero container">
       <div className="hero-copy"><p className="eyebrow"><Sparkles size={16} /> SMART LIVING, CONNECTED</p><h1>Connectivity that<br /><em>moves with you.</em></h1><p className="hero-text">e Hoome IoT solutions connect virtually any electronic device to the Internet for smart control and monitoring anywhere, anytime.</p><button className="button button-green" onClick={() => navigate('products')}>Explore products <ArrowRight size={18} /></button></div>
@@ -321,7 +334,7 @@ function Home({ navigate, setActiveCategory }: { navigate: (page: Page) => void;
     <section className="trust-strip"><div className="container trust-inner"><span>Designed for connection</span><div><ShieldCheck size={20} /> Quality tested</div><div><Factory size={20} /> Made for scale</div><div><CircleHelp size={20} /> 24/7 support</div></div></section>
     <section className="section container categories-section"><div className="section-heading"><div><p className="eyebrow">OUR SOLUTIONS</p><h2>Product <em>Categories</em></h2></div><button className="text-button" onClick={() => navigate('products')}>View all products <ArrowRight size={16} /></button></div><p className="section-lede">Powering better connections through thoughtfully designed networking solutions.</p><div className="category-grid">{productCategories.map(({ name, icon: Icon, description }, index) => <button className="category-card" key={name} onClick={() => navigateWithCategory(name)}><span className="category-number">0{index + 1}</span><div className="category-icon"><Icon size={28} /></div><h3>{name}</h3><p>{description}</p><span className="card-link">Explore <ChevronRight size={16} /></span></button>)}</div></section>
     <section className="overview-section"><div className="container overview-grid"><div><p className="eyebrow">THE E HOOME DIFFERENCE</p><h2>Built for a world<br />that never <em>disconnects.</em></h2></div><div className="overview-copy"><p>e Hoome IoT was established in 2019 as an EMS oriented communication equipment manufacturer. We make connectivity simple, reliable and accessible.</p><div className="mini-stats"><div><strong><Counter end={50} duration={2000} suffix="+" /></strong><span>Products</span></div><div><strong><Counter end={500} duration={2000} suffix="+" /></strong><span>Happy customers</span></div><div><strong><Counter end={10} duration={2000} suffix="+" /></strong><span>Services</span></div><div><strong><Counter end={750} duration={2000} suffix="+" /></strong><span>Employees</span></div></div></div></div></section>
-    <section className="feature-section container"><div className="feature-image"><img src={galleryImages[1]} alt="Electronics production line" /></div><div className="feature-copy"><p className="eyebrow">CAPABILITY IN MOTION</p><h2>From first signal to <em>full scale.</em></h2><p>Our complete manufacturing ecosystem covers design, development, testing, assembly and ongoing product support.</p><button className="text-button" onClick={() => navigate('gallery')}>Discover our factory <ArrowRight size={16} /></button></div></section>
+    <section className="feature-section container"><div className="feature-image"><ImageSlideshow images={factoryImages} interval={4000} /></div><div className="feature-copy"><p className="eyebrow">CAPABILITY IN MOTION</p><h2>From first signal to <em>full scale.</em></h2><p>Our complete manufacturing ecosystem covers design, development, testing, assembly and ongoing product support.</p><button className="text-button" onClick={() => navigate('gallery')}>Discover our factory <ArrowRight size={16} /></button></div></section>
   </main>;
 }
 
