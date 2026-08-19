@@ -15,7 +15,6 @@ import {
   Search,
   Send,
   ShieldCheck,
-  Sparkles,
   X,
   Zap,
   Youtube,
@@ -213,9 +212,11 @@ function App() {
   const [exhibitionDropdownOpen, setExhibitionDropdownOpen] = useState(false);
   const [selectedGallerySection, setSelectedGallerySection] = useState<GallerySection>('factory');
   const [isLoading, setIsLoading] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
   const productsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const galleryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const exhibitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastScrollRef = useRef(0);
 
   const navigate = (nextPage: Page, gallerySection?: GallerySection) => {
     setPage(nextPage);
@@ -284,10 +285,21 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScroll = window.scrollY;
+      setIsScrolled(currentScroll > 50);
+      lastScrollRef.current = currentScroll;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="app-shell">
       {isLoading && <Loading />}
-      <header className="site-header">
+      <header className={`site-header ${isScrolled ? 'scrolled' : ''}`}>
         <div className="container header-inner">
           <button className="brand" onClick={() => navigate('home')} aria-label="e Hoome IoT home"><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button>
           <nav className="desktop-nav"><button className={page === 'home' ? 'active' : ''} onClick={() => navigate('home')}>Home</button><div className="products-nav-wrapper" onMouseEnter={handleProductsMouseEnter} onMouseLeave={handleProductsMouseLeave}><button className={page === 'products' ? 'active' : ''} onClick={() => { if (page === 'products') { setProductsDropdownOpen(!productsDropdownOpen); } else { setActiveCategory('All products'); navigate('products'); } }}>Products <ChevronDown size={14} style={{ transform: productsDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{productsDropdownOpen && <div className="products-dropdown"><button onClick={() => navigateWithCategory('All products')}>All products</button>{productCategories.map(({ name }) => <button key={name} onClick={() => navigateWithCategory(name)}>{name}</button>)}</div>}</div><div className="gallery-nav-wrapper" onMouseEnter={handleGalleryMouseEnter} onMouseLeave={handleGalleryMouseLeave}><button className={page === 'gallery' || page === 'gallery-detail' ? 'active' : ''} onClick={() => { if (page === 'gallery') { setGalleryDropdownOpen(!galleryDropdownOpen); } else { navigate('gallery'); } }}>Photo Gallery <ChevronDown size={14} style={{ transform: galleryDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{galleryDropdownOpen && <div className="gallery-dropdown"><button onClick={() => navigate('gallery-detail', 'factory')}>Factory View</button><div className="exhibition-submenu-wrapper" onMouseEnter={handleExhibitionMouseEnter} onMouseLeave={handleExhibitionMouseLeave}><button onClick={() => setExhibitionDropdownOpen(!exhibitionDropdownOpen)}>Exhibition <ChevronDown size={12} style={{ transform: exhibitionDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{exhibitionDropdownOpen && <div className="exhibition-submenu"><button onClick={() => navigate('gallery-detail', 'delhi')}>Convergence Exhibition Delhi – 2022</button><button onClick={() => navigate('gallery-detail', 'dubai')}>GITEX Exhibition Dubai – 2022</button></div>}</div></div>}</div><button className={page === 'contact' ? 'active' : ''} onClick={() => navigate('contact')}>Contact Us</button></nav>
@@ -328,9 +340,8 @@ function Home({ navigate, setActiveCategory }: { navigate: (page: Page) => void;
   ];
 
   return <main>
-    <section className="hero container">
-      <div className="hero-copy"><p className="eyebrow"><Sparkles size={16} /> SMART LIVING, CONNECTED</p><h1>Connectivity that<br /><em>moves with you.</em></h1><p className="hero-text">e Hoome IoT solutions connect virtually any electronic device to the Internet for smart control and monitoring anywhere, anytime.</p><button className="button button-green" onClick={() => navigate('products')}>Explore products <ArrowRight size={18} /></button></div>
-      <div className="hero-art"><div className="art-grid" /><div className="device device-router"><div className="antenna a1" /><div className="antenna a2" /><div className="ports" /></div><div className="floating-chip chip-one">Wi-Fi 6</div><div className="floating-chip chip-two">GPON</div><div className="hero-circle">e<span>H</span></div></div>
+    <section className="hero">
+      <video autoPlay muted loop playsInline className="hero-video" preload="none" poster="/hero-poster.jpg" src="/Ehoome_intro.mp4" />
     </section>
     <section className="trust-strip"><div className="container trust-inner"><span>Designed for connection</span><div><ShieldCheck size={20} /> Quality tested</div><div><Factory size={20} /> Made for scale</div><div><CircleHelp size={20} /> 24/7 support</div></div></section>
     <section className="section container categories-section"><div className="section-heading"><div><p className="eyebrow">OUR SOLUTIONS</p><h2>Product <em>Categories</em></h2></div><button className="text-button" onClick={() => navigate('products')}>View all products <ArrowRight size={16} /></button></div><p className="section-lede">Powering better connections through thoughtfully designed networking solutions.</p><div className="category-grid">{productCategories.map(({ name, icon: Icon, description }, index) => <button className="category-card" key={name} onClick={() => navigateWithCategory(name)}><span className="category-number">0{index + 1}</span><div className="category-icon"><Icon size={28} /></div><h3>{name}</h3><p>{description}</p><span className="card-link">Explore <ChevronRight size={16} /></span></button>)}</div></section>
