@@ -115,13 +115,39 @@ button {
     transition: .2s;
 }
 
-.desktop-nav button:hover,
-.desktop-nav button.active {
-    color: var(--ink);
+.desktop-nav button:hover {
+    background: var(--lime);
+    color: var(--deep);
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin: 0 -12px;
 }
 
 .desktop-nav button.active {
+    color: var(--ink);
     border-bottom: 2px solid var(--lime);
+}
+
+.desktop-nav button.contact-button {
+    background: var(--lime) !important;
+    color: var(--deep) !important;
+    border-radius: 4px;
+    padding: 8px 16px !important;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    border-bottom: none !important;
+}
+
+.desktop-nav button.contact-button:hover {
+    background: var(--green) !important;
+    color: white !important;
+    transform: scale(1.05);
+}
+
+.desktop-nav button.contact-button.active {
+    background: var(--lime) !important;
+    color: var(--deep) !important;
+    border-bottom: none !important;
 }
 
 .menu-button {
@@ -2204,8 +2230,8 @@ footer {
 
 .products-dropdown button:hover,
 .gallery-dropdown button:hover {
-    background: var(--paper);
-    color: var(--ink);
+    background: var(--lime);
+    color: var(--deep);
 }
 
 .products-dropdown button:first-child,
@@ -2240,8 +2266,8 @@ footer {
 }
 
 .exhibition-submenu-wrapper > button:hover {
-    background: var(--paper);
-    color: var(--ink);
+    background: var(--lime);
+    color: var(--deep);
 }
 
 .exhibition-submenu {
@@ -2278,8 +2304,8 @@ footer {
 }
 
 .exhibition-submenu button:hover {
-    background: var(--paper);
-    color: var(--ink);
+    background: var(--lime);
+    color: var(--deep);
 }
 
 @media (max-width:900px) {
