@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+﻿import { useEffect, useState, useRef } from 'react';
 import {
   ArrowRight,
   ChevronDown,
@@ -23,6 +23,7 @@ import {
   Facebook,
   Instagram,
   Twitter,
+  Link,
 } from 'lucide-react';
 import { Loading } from './Loading';
 import { Counter } from './Counter';
@@ -576,7 +577,7 @@ function Footer({ navigate }: { navigate: (page: Page) => void }) {
     { icon: Instagram, url: "https://www.instagram.com/ehoomenetworks/", label: "Instagram" },
     { icon: Twitter, url: "https://x.com/ehoome_iot", label: "X" },
   ];
-  return <footer><div className="container footer-grid"><div className="footer-brand"><button className="brand light" onClick={() => navigate('home')}><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button><p>Making every connection count.</p><div className="footer-social">{socialLinks.map(({ icon: Icon, url, label }) => <a key={label} href={url} target="_blank" rel="noopener noreferrer" aria-label={label}><Icon size={16} /></a>)}</div></div><div><h4>Quick Links</h4><button onClick={() => navigate('home')}>Home</button><button onClick={() => navigate('products')}>Products</button><button onClick={() => navigate('gallery')}>Factory View</button><button onClick={() => navigate('gallery')}>Exhibition View</button><button onClick={() => navigate('contact')}>Contact Us</button></div><div><h4>Products & Solutions</h4>{productCategories.slice(0, 5).map(({ name }) => <button key={name} onClick={() => navigate('products')}>{name}</button>)}</div><div><h4>Contact</h4><p>info@ehoome.in</p><p>+91 33-22894255 / 56</p></div></div><div className="footer-bottom"><span>Copyright © {currentYear} e Hoome IoT Pvt Ltd. All rights reserved.</span></div></footer>;
+  return <footer><div className="container footer-grid"><div className="footer-brand"><button className="brand light" onClick={() => navigate('home')}><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button><p>Making every connection count.</p><div className="footer-social">{socialLinks.map(({ icon: Icon, url, label }) => <a key={label} href={url} target="_blank" rel="noopener noreferrer" aria-label={label}><Icon size={16} /></a>)}</div></div><div><h4>Quick Links</h4><button onClick={() => navigate('home')}>Home</button><button onClick={() => navigate('products')}>Products</button><button onClick={() => navigate('gallery')}>Factory View</button><button onClick={() => navigate('gallery')}>Exhibition View</button><button onClick={() => navigate('contact')}>Contact Us</button></div><div><h4>Products & Solutions</h4>{productCategories.slice(0, 5).map(({ name }) => <button key={name} onClick={() => navigate('products')}>{name}</button>)}</div><div><h4>Contact</h4><p>info@ehoome.in</p><p>+91 33-22894255 / 56</p></div></div><div className="footer-bottom"><span>Copyright © {currentYear} e Hoome IoT Pvt Ltd. All rights reserved.</span><span> · Design & Develop by Arun Kumar <a href="https://portfolio-arun.netlify.app/" target="_blank" rel="noopener noreferrer" aria-label="Arun Kumar Portfolio"><Link size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /></a></span></div></footer>;
 }
 
 export default App;
