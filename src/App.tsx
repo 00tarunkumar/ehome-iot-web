@@ -367,6 +367,95 @@ function App() {
   );
 }
 
+function CategoryStickyScroll({
+  navigate,
+  navigateWithCategory,
+}: {
+  navigate: (page: Page) => void;
+  navigateWithCategory: (category: string) => void;
+}) {
+  const triggerRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const maskRef = useRef<HTMLDivElement>(null);
+  const extraRef = useRef(0);
+
+  useEffect(() => {
+    const trigger = triggerRef.current;
+    const track = trackRef.current;
+    const mask = maskRef.current;
+    if (!trigger || !track || !mask) return;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const layout = () => {
+      extraRef.current = prefersReduced ? 0 : Math.max(track.scrollWidth - mask.clientWidth, 0);
+      trigger.style.height = prefersReduced ? 'auto' : `${window.innerHeight + extraRef.current}px`;
+    };
+
+    const sync = () => {
+      if (prefersReduced) {
+        track.style.transform = 'translate3d(0,0,0)';
+        return;
+      }
+      const maxScroll = trigger.offsetHeight - window.innerHeight;
+      const progress = maxScroll <= 0 ? 0 : Math.min(1, Math.max(0, -trigger.getBoundingClientRect().top / maxScroll));
+      track.style.transform = `translate3d(${-extraRef.current * progress}px, 0, 0)`;
+    };
+
+    const onScroll = () => sync();
+    const onResize = () => {
+      layout();
+      sync();
+    };
+
+    layout();
+    sync();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    const observer = new ResizeObserver(onResize);
+    observer.observe(track);
+    observer.observe(mask);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      observer.disconnect();
+    };
+  }, []);
+
+  return (
+    <section className="categories-scroll-trigger" ref={triggerRef}>
+      <div className="categories-sticky">
+        <div className="container categories-sticky-inner">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">OUR SOLUTIONS</p>
+              <h2>Product <em>Categories</em></h2>
+            </div>
+            <button className="text-button" onClick={() => navigate('products')}>
+              View all products <ArrowRight size={16} />
+            </button>
+          </div>
+          <p className="section-lede">Powering better connections through thoughtfully designed networking solutions. Scroll to move through each category.</p>
+          <div className="categories-track-mask" ref={maskRef}>
+            <div className="categories-track" ref={trackRef}>
+              {productCategories.map(({ name, icon: Icon, description }, index) => (
+                <button className="category-card category-card-scroll" key={name} onClick={() => navigateWithCategory(name)}>
+                  <span className="category-number">0{index + 1}</span>
+                  <div className="category-icon"><Icon size={28} /></div>
+                  <h3>{name}</h3>
+                  <p>{description}</p>
+                  <span className="card-link">Explore <ChevronRight size={16} /></span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Home({ navigate, setActiveCategory }: { navigate: (page: Page) => void; setActiveCategory: (category: string) => void }) {
   const navigateWithCategory = (category: string) => {
     setActiveCategory(category);
@@ -390,7 +479,7 @@ function Home({ navigate, setActiveCategory }: { navigate: (page: Page) => void;
       <video autoPlay muted loop playsInline className="hero-video" preload="none" poster="/hero-poster.jpg" src="/Ehoome_intro.mp4" />
     </section>
     <section className="trust-strip"><div className="container trust-inner"><span>Designed for connection</span><div><ShieldCheck size={20} /> Quality tested</div><div><Factory size={20} /> Made for scale</div><div><CircleHelp size={20} /> 24/7 support</div></div></section>
-    <section className="section container categories-section"><div className="section-heading"><div><p className="eyebrow">OUR SOLUTIONS</p><h2>Product <em>Categories</em></h2></div><button className="text-button" onClick={() => navigate('products')}>View all products <ArrowRight size={16} /></button></div><p className="section-lede">Powering better connections through thoughtfully designed networking solutions.</p><div className="category-grid">{productCategories.map(({ name, icon: Icon, description }, index) => <button className="category-card" key={name} onClick={() => navigateWithCategory(name)}><span className="category-number">0{index + 1}</span><div className="category-icon"><Icon size={28} /></div><h3>{name}</h3><p>{description}</p><span className="card-link">Explore <ChevronRight size={16} /></span></button>)}</div></section>
+    <CategoryStickyScroll navigate={navigate} navigateWithCategory={navigateWithCategory} />
     <section className="overview-section"><div className="container overview-grid"><div><p className="eyebrow">THE E HOOME DIFFERENCE</p><h2>Built for a world<br />that never <em>disconnects.</em></h2></div><div className="overview-copy"><p>e Hoome IoT was established in 2019 as an EMS oriented communication equipment manufacturer. We make connectivity simple, reliable and accessible.</p><div className="mini-stats"><div><strong><Counter end={50} duration={2000} suffix="+" /></strong><span>Products</span></div><div><strong><Counter end={500} duration={2000} suffix="+" /></strong><span>Happy customers</span></div><div><strong><Counter end={10} duration={2000} suffix="+" /></strong><span>Services</span></div><div><strong><Counter end={750} duration={2000} suffix="+" /></strong><span>Employees</span></div></div></div></div></section>
     <section className="feature-section container"><div className="feature-image"><ImageSlideshow images={factoryImages} interval={4000} /></div><div className="feature-copy"><p className="eyebrow">CAPABILITY IN MOTION</p><h2>From first signal to <em>full scale.</em></h2><p>Our complete manufacturing ecosystem covers design, development, testing, assembly and ongoing product support.</p><button className="text-button" onClick={() => navigate('gallery')}>Discover our factory <ArrowRight size={16} /></button></div></section>
   </main>;

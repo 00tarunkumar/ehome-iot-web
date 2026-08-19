@@ -606,6 +606,52 @@ em {
     border-left: 1px solid var(--line);
 }
 
+.categories-scroll-trigger {
+    position: relative;
+}
+
+.categories-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--paper);
+    display: flex;
+    align-items: stretch;
+}
+
+.categories-sticky-inner {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 108px;
+    padding-bottom: 36px;
+    min-height: 100%;
+}
+
+.categories-sticky-inner .section-heading {
+    flex-shrink: 0;
+}
+
+.categories-sticky-inner .section-lede {
+    flex-shrink: 0;
+    margin-bottom: 28px;
+}
+
+.categories-track-mask {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.categories-track {
+    display: flex;
+    gap: 22px;
+    will-change: transform;
+}
+
 .category-card {
     background: #fff;
     min-height: 260px;
@@ -615,7 +661,31 @@ em {
     border-right: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
     position: relative;
-    transition: .25s;
+    transition: background .25s, color .25s, box-shadow .25s, transform .25s;
+}
+
+.category-card-scroll {
+    flex: 0 0 340px;
+    width: 340px;
+    min-height: 360px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: 0 10px 28px rgba(10, 25, 18, .06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .categories-sticky {
+        position: relative;
+        height: auto;
+    }
+
+    .categories-track {
+        flex-wrap: wrap;
+    }
+
+    .categories-track-mask {
+        overflow: visible;
+    }
 }
 
 .category-card:hover {
@@ -2401,6 +2471,17 @@ footer {
         grid-template-columns: repeat(2, 1fr);
     }
 
+    .categories-sticky-inner {
+        padding-top: 96px;
+        padding-bottom: 24px;
+    }
+
+    .category-card-scroll {
+        flex-basis: 280px;
+        width: 280px;
+        min-height: 320px;
+    }
+
     .overview-grid,
     .feature-section,
     .contact-grid {
@@ -2615,6 +2696,16 @@ footer {
 
     .category-card {
         min-height: 230px;
+    }
+
+    .categories-sticky-inner {
+        padding-top: 88px;
+    }
+
+    .category-card-scroll {
+        flex-basis: min(78vw, 300px);
+        width: min(78vw, 300px);
+        min-height: 300px;
     }
 
     .overview-section {
