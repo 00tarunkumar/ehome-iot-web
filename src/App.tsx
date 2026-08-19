@@ -218,6 +218,52 @@ function App() {
   const exhibitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastScrollRef = useRef(0);
 
+  useEffect(() => {
+    let lastSparkleTime = 0;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const now = Date.now();
+      if (now - lastSparkleTime > 20) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'cursor-sparkle';
+
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = 30 + Math.random() * 40;
+        const tx = Math.cos(angle) * velocity;
+        const ty = Math.sin(angle) * velocity;
+
+        sparkle.style.left = e.clientX + 'px';
+        sparkle.style.top = e.clientY + 'px';
+        sparkle.style.setProperty('--tx', tx + 'px');
+        sparkle.style.setProperty('--ty', ty + 'px');
+
+        document.body.appendChild(sparkle);
+
+        setTimeout(() => sparkle.remove(), 800);
+        lastSparkleTime = now;
+      }
+    };
+
+    const handleClick = (e: MouseEvent) => {
+      const glow = document.createElement('div');
+      glow.className = 'cursor-glow';
+      glow.style.left = (e.clientX - 10) + 'px';
+      glow.style.top = (e.clientY - 10) + 'px';
+      document.body.appendChild(glow);
+
+      setTimeout(() => {
+        glow.remove();
+      }, 600);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
+
   const navigate = (nextPage: Page, gallerySection?: GallerySection) => {
     setPage(nextPage);
     if (gallerySection) setSelectedGallerySection(gallerySection);
