@@ -68,7 +68,7 @@ function CapabilityGallery() {
   );
 }
 
-type Page = 'home' | 'products' | 'gallery' | 'gallery-detail' | 'contact';
+type Page = 'home' | 'products' | 'gallery' | 'gallery-detail' | 'contact' | 'about';
 type GallerySection = 'factory' | 'delhi' | 'dubai';
 
 type ProductSpec = {
@@ -388,16 +388,17 @@ function App() {
       <header className={`site-header ${isScrolled ? 'scrolled' : ''}`}>
         <div className="container header-inner">
           <button className="brand" onClick={() => navigate('home')} aria-label="e Hoome IoT home"><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button>
-          <nav className="desktop-nav"><button className={page === 'home' ? 'active' : ''} onClick={() => navigate('home')}>Home</button><div className="products-nav-wrapper" onMouseEnter={handleProductsMouseEnter} onMouseLeave={handleProductsMouseLeave}><button className={page === 'products' ? 'active' : ''} onClick={() => { if (page === 'products') { setProductsDropdownOpen(!productsDropdownOpen); } else { setActiveCategory('All products'); navigate('products'); } }}>Products <ChevronDown size={14} style={{ transform: productsDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{productsDropdownOpen && <div className="products-dropdown"><button onClick={() => navigateWithCategory('All products')}>All products</button>{productCategories.map(({ name }) => <button key={name} onClick={() => navigateWithCategory(name)}>{name}</button>)}</div>}</div><div className="gallery-nav-wrapper" onMouseEnter={handleGalleryMouseEnter} onMouseLeave={handleGalleryMouseLeave}><button className={page === 'gallery' || page === 'gallery-detail' ? 'active' : ''} onClick={() => { if (page === 'gallery') { setGalleryDropdownOpen(!galleryDropdownOpen); } else { navigate('gallery'); } }}>Photo Gallery <ChevronDown size={14} style={{ transform: galleryDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{galleryDropdownOpen && <div className="gallery-dropdown"><button onClick={() => navigate('gallery-detail', 'factory')}>Factory View</button><div className="exhibition-submenu-wrapper" onMouseEnter={handleExhibitionMouseEnter} onMouseLeave={handleExhibitionMouseLeave}><button onClick={() => setExhibitionDropdownOpen(!exhibitionDropdownOpen)}>Exhibition <ChevronDown size={12} style={{ transform: exhibitionDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{exhibitionDropdownOpen && <div className="exhibition-submenu"><button onClick={() => navigate('gallery-detail', 'delhi')}>Convergence Exhibition Delhi – 2022</button><button onClick={() => navigate('gallery-detail', 'dubai')}>GITEX Exhibition Dubai – 2022</button></div>}</div></div>}</div><button className={`contact-button ${page === 'contact' ? 'active' : ''}`} onClick={() => navigate('contact')}>Contact Us</button></nav>
+          <nav className="desktop-nav"><button className={page === 'home' ? 'active' : ''} onClick={() => navigate('home')}>Home</button><div className="products-nav-wrapper" onMouseEnter={handleProductsMouseEnter} onMouseLeave={handleProductsMouseLeave}><button className={page === 'products' ? 'active' : ''} onClick={() => { if (page === 'products') { setProductsDropdownOpen(!productsDropdownOpen); } else { setActiveCategory('All products'); navigate('products'); } }}>Products <ChevronDown size={14} style={{ transform: productsDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{productsDropdownOpen && <div className="products-dropdown"><button onClick={() => navigateWithCategory('All products')}>All products</button>{productCategories.map(({ name }) => <button key={name} onClick={() => navigateWithCategory(name)}>{name}</button>)}</div>}</div><div className="gallery-nav-wrapper" onMouseEnter={handleGalleryMouseEnter} onMouseLeave={handleGalleryMouseLeave}><button className={page === 'gallery' || page === 'gallery-detail' ? 'active' : ''} onClick={() => { if (page === 'gallery') { setGalleryDropdownOpen(!galleryDropdownOpen); } else { navigate('gallery'); } }}>Photo Gallery <ChevronDown size={14} style={{ transform: galleryDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{galleryDropdownOpen && <div className="gallery-dropdown"><button onClick={() => navigate('gallery-detail', 'factory')}>Factory View</button><div className="exhibition-submenu-wrapper" onMouseEnter={handleExhibitionMouseEnter} onMouseLeave={handleExhibitionMouseLeave}><button onClick={() => setExhibitionDropdownOpen(!exhibitionDropdownOpen)}>Exhibition <ChevronDown size={12} style={{ transform: exhibitionDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }} /></button>{exhibitionDropdownOpen && <div className="exhibition-submenu"><button onClick={() => navigate('gallery-detail', 'delhi')}>Convergence Exhibition Delhi – 2022</button><button onClick={() => navigate('gallery-detail', 'dubai')}>GITEX Exhibition Dubai – 2022</button></div>}</div></div>}</div><button className={page === 'about' ? 'active' : ''} onClick={() => navigate('about')}>About Us</button><button className={`contact-button ${page === 'contact' ? 'active' : ''}`} onClick={() => navigate('contact')}>Contact Us</button></nav>
           <button className="menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Open menu">{menuOpen ? <X /> : <Menu />}</button>
         </div>
-        {menuOpen && <div className="mobile-menu"><button onClick={() => navigate('home')}>Home</button><button onClick={() => navigate('products')}>Products</button><button onClick={() => navigate('gallery')}>Photo Gallery</button><button onClick={() => navigate('contact')}>Contact Us</button></div>}
+        {menuOpen && <div className="mobile-menu"><button onClick={() => navigate('home')}>Home</button><button onClick={() => navigate('products')}>Products</button><button onClick={() => navigate('gallery')}>Photo Gallery</button><button onClick={() => navigate('about')}>About Us</button><button onClick={() => navigate('contact')}>Contact Us</button></div>}
       </header>
 
       {page === 'home' && <Home navigate={navigate} setActiveCategory={setActiveCategory} />}
       {page === 'products' && <Products activeCategory={activeCategory} setActiveCategory={setActiveCategory} navigate={navigate} onSelectProduct={setSelectedProduct} />}
       {page === 'gallery' && <Gallery navigate={navigate} />}
       {page === 'gallery-detail' && <GalleryDetail section={selectedGallerySection} navigate={navigate} />}
+      {page === 'about' && <About navigate={navigate} />}
       {page === 'contact' && <Contact submitted={submitted} setSubmitted={setSubmitted} />}
 
       {page !== 'contact' && <SupportBand navigate={navigate} />}
@@ -748,6 +749,72 @@ function Contact({ submitted, setSubmitted }: { submitted: boolean; setSubmitted
   return <main><section className="page-intro contact-intro"><div className="container"><p className="eyebrow">WE’RE HERE TO HELP</p><h1>Let’s start a<br /><em>conversation.</em></h1><p>Have a question, product enquiry or partnership idea? Our team is ready to listen.</p></div></section><section className="container contact-grid"><div className="contact-details"><p className="eyebrow">CONTACT DETAILS</p><h2>Reach out <em>directly.</em></h2><div className="detail-item"><Mail size={20} /><div><strong>Email</strong><span>info@ehoome.in</span></div></div><div className="detail-item"><Phone size={20} /><div><strong>Phone</strong><span>+91 33-22894255 / 56</span></div></div><div className="detail-item"><Factory size={20} /><div><strong>Registered Office</strong><span>Premlata, 39C, Shakespeare Sarani, Mullick Bazar, Park Street area, Kolkata, West Bengal 700017</span></div></div><div className="contact-hours"><span>Customer support</span><strong>Open 24/7 for help</strong></div><div className="contact-social"><span>Follow us</span><div className="social-links">{socialLinks.map(({ icon: Icon, url, label }) => <a key={label} href={url} target="_blank" rel="noopener noreferrer" aria-label={label}><Icon size={20} /></a>)}</div></div><div className="rma-form-section"><span>Get our RMA Form</span><button className="rma-button" onClick={() => setShowRMAForm(true)}>Request RMA Form</button></div></div><div className="contact-form-wrap"><p className="eyebrow">QUICK CONTACT</p><h2>Tell us what you <em>need.</em></h2>{submitted ? <div className="success-message"><ShieldCheck size={30} /><h3>Thank you for reaching out.</h3><p>We’ll be in touch shortly.</p></div> : <form onSubmit={(event) => { event.preventDefault(); setSubmitted(true); }}><div className="form-row"><input required placeholder="Name" /><input required type="email" placeholder="Email" /></div><div className="form-row"><input placeholder="Phone No." /><input placeholder="Company Name" /></div><select defaultValue=""><option value="" disabled>Select Product</option><option>ONT Series</option><option>OLT Series</option><option>Switch Series</option></select><textarea required placeholder="Message" rows={5} /><button className="button button-green" type="submit">Submit now <Send size={16} /></button></form>}</div></section><section className="office-section"><div className="container office-heading"><p className="eyebrow">OUR LOCATIONS</p><h2>Find us in <em>person.</em></h2></div><div className="office-maps-wrapper"><div className="office-map-container"><h3>Registered Office</h3><div className="office-map"><iframe title="Registered Office Map" src="https://www.google.com/maps?q=Premlata%2C%2039C%2C%20Shakespeare%20Sarani%2C%20Mullick%20Bazar%2C%20Park%20Street%20area%2C%20Kolkata%2C%20West%20Bengal%20700017&output=embed" loading="lazy" referrerPolicy="no-referrer-when-downgrade" /></div></div><div className="office-map-container"><h3>Development Centre</h3><div className="office-map"><iframe title="Development Centre Map" src="https://www.google.com/maps?q=D%20Block%2C%20Sector%2039%2C%20Noida%2C%20Uttar%20Pradesh%20201303&output=embed" loading="lazy" referrerPolicy="no-referrer-when-downgrade" /></div></div></div></section>{showRMAForm && <RMAFormModal onClose={() => setShowRMAForm(false)} />}</main>;
 }
 
+function About({ navigate }: { navigate: (page: Page) => void }) {
+  return <main>
+    <section className="page-intro about-intro">
+      <div className="container">
+        <p className="eyebrow">WHO WE ARE</p>
+        <h1>About <em>e Hoome IoT</em></h1>
+        <p>Building the future of smart connectivity with innovation and excellence.</p>
+      </div>
+    </section>
+
+    <section className="container about-section">
+      <div className="about-content">
+        <div className="about-text">
+          <p className="eyebrow">THE E HOOME STORY</p>
+          <h2>Built on <em>Innovation & Trust</em></h2>
+          <p>The eHoome IoT brand is a company of Rashmi Group, which is a very versatile group and have a wide range of products that develop and design embedded IoT solutions. We provide product development and big data operations with our own complete manufacturing of SMT/ASSEMBLY facility in Noida. Our Smart products are developed with the platform heads innovative energy cloud architecture, helping every category of consumers build their smart world and control their smart buildings with ease.</p>
+          <p style={{ marginTop: '16px' }}>We are an Electronics Manufacturing Services (EMS) company & PII (Production Linked Incentive Scheme) accredited telecom protected company in Noida, recognized for our commitment to excellence and innovation in the electronics manufacturing industry.</p>
+        </div>
+        <div className="about-stats">
+          <div className="stat-item">
+            <strong>8</strong>
+            <span>Products</span>
+          </div>
+          <div className="stat-item">
+            <strong>85</strong>
+            <span>Happy Customers</span>
+          </div>
+          <div className="stat-item">
+            <strong>1</strong>
+            <span>Services</span>
+          </div>
+          <div className="stat-item">
+            <strong>127</strong>
+            <span>Employees</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section className="container factory-section">
+      <div className="factory-content">
+        <p className="eyebrow">MANUFACTURING EXCELLENCE</p>
+        <h2>Our <em>Factory</em></h2>
+        <p>The Factory is equipped with a clean room, SMT machine, quality lab, and an assembly conveyor for testing equipment. Spread across an area of 50,000 sq.ft, the factory boasts of two working SMT lines for production and two more are under procurement.</p>
+
+        <div className="factory-features">
+          <div className="feature-card">
+            <h4>Assembly Lines</h4>
+            <p>4 assembly lines and 2 MI lines which facilitate quick, hassle free, and clean production capabilities with a capacity of 8 million components per day at a speed of 5.58 seconds per chip.</p>
+          </div>
+          <div className="feature-card">
+            <h4>Advanced Equipment</h4>
+            <p>The production facility is equipped with automated testing and inspection equipment, 4 PCB machines, air blowers, Automatic Screening Machines, Press Welding Machines, automatic simulators, and audio testing equipment.</p>
+          </div>
+          <div className="feature-card">
+            <h4>Quality Assurance</h4>
+            <p>The company follows strict quality control practices with in-house 3D X-ray, LCR system for EMI, Reliability Testing & Dual level control. All machines are from leading brands like Flex, Panasonic, etc.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <SupportBand navigate={navigate} />
+  </main>;
+}
+
 function SupportBand({ navigate }: { navigate: (page: Page) => void }) {
   return <section className="support-band"><div className="container support-inner"><div><p className="eyebrow">OPEN 24/7 SUPPORT FOR HELP</p><h2>Call for support.<br /><em>We are ready to help you.</em></h2></div><button className="button button-white" onClick={() => navigate('contact')}>Contact now <ArrowRight size={17} /></button></div></section>;
 }
@@ -765,7 +832,7 @@ function Footer({ navigate }: { navigate: (page: Page) => void }) {
     { icon: Instagram, url: "https://www.instagram.com/ehoomenetworks/", label: "Instagram" },
     { icon: Twitter, url: "https://x.com/ehoome_iot", label: "X" },
   ];
-  return <footer data-env={isProduction ? 'production' : 'development'}><div className="container footer-grid"><div className="footer-brand"><button className="brand light" onClick={() => navigate('home')}><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button><p>Making every connection count.</p><div className="footer-social">{socialLinks.map(({ icon: Icon, url, label }) => <a key={label} href={url} target="_blank" rel="noopener noreferrer" aria-label={label}><Icon size={16} /></a>)}</div></div><div><h4>Quick Links</h4><button onClick={() => navigate('home')}>Home</button><button onClick={() => navigate('products')}>Products</button><button onClick={() => navigate('gallery')}>Factory View</button><button onClick={() => navigate('gallery')}>Exhibition View</button><button onClick={() => navigate('contact')}>Contact Us</button></div><div><h4>Products & Solutions</h4>{productCategories.slice(0, 5).map(({ name }) => <button key={name} onClick={() => navigate('products')}>{name}</button>)}</div><div><h4>Contact</h4><p>info@ehoome.in</p><p>+91 33-22894255 / 56</p></div></div><div className="footer-bottom"><span>Copyright © {currentYear} e Hoome IoT Pvt Ltd. All rights reserved.</span>{isProduction && <span className="developer-credit"> · Design & Develop by Arun Kumar <a href="https://portfolio-arun.netlify.app/" target="_blank" rel="noopener noreferrer" aria-label="Arun Kumar Portfolio"><Link size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /></a></span>}</div></footer>;
+  return <footer data-env={isProduction ? 'production' : 'development'}><div className="container footer-grid"><div className="footer-brand"><button className="brand light" onClick={() => navigate('home')}><img className="brand-logo" src="/Logo-removebg.png" alt="e Hoome IoT smart living" /></button><p>Making every connection count.</p><div className="footer-social">{socialLinks.map(({ icon: Icon, url, label }) => <a key={label} href={url} target="_blank" rel="noopener noreferrer" aria-label={label}><Icon size={16} /></a>)}</div></div><div><h4>Quick Links</h4><button onClick={() => navigate('home')}>Home</button><button onClick={() => navigate('products')}>Products</button><button onClick={() => navigate('about')}>About Us</button><button onClick={() => navigate('gallery')}>Factory View</button><button onClick={() => navigate('contact')}>Contact Us</button></div><div><h4>Products & Solutions</h4>{productCategories.slice(0, 5).map(({ name }) => <button key={name} onClick={() => navigate('products')}>{name}</button>)}</div><div><h4>Contact</h4><p>info@ehoome.in</p><p>+91 33-22894255 / 56</p></div></div><div className="footer-bottom"><span>Copyright © {currentYear} e Hoome IoT Pvt Ltd. All rights reserved.</span>{isProduction && <span className="developer-credit"> · Design & Develop by Arun Kumar <a href="https://portfolio-arun.netlify.app/" target="_blank" rel="noopener noreferrer" aria-label="Arun Kumar Portfolio"><Link size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /></a></span>}</div></footer>;
 }
 
 export default App;

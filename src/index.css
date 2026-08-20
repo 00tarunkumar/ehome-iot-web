@@ -1893,6 +1893,110 @@ em {
     color: #adbbb3;
 }
 
+.about-intro {
+    background: linear-gradient(rgba(12, 23, 20, 0.85), rgba(12, 23, 20, 0.85)), url('/product_banner.jpg') no-repeat center center / cover;
+    color: white;
+}
+
+.about-intro p:not(.eyebrow) {
+    color: #adbbb3;
+}
+
+.about-section {
+    padding: 100px 0;
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+}
+
+.about-text h2 {
+    font-size: 43px;
+    margin-bottom: 24px;
+}
+
+.about-text p {
+    color: #788880;
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+.about-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 30px;
+    background: #0f2620;
+    border-radius: 8px;
+    border: 1px solid #26342e;
+}
+
+.stat-item strong {
+    display: block;
+    font-size: 48px;
+    color: var(--green);
+    margin-bottom: 12px;
+}
+
+.stat-item span {
+    display: block;
+    color: #788880;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.factory-section {
+    padding: 100px 0;
+}
+
+.factory-content h2 {
+    font-size: 43px;
+    margin-bottom: 24px;
+    margin-top: 16px;
+}
+
+.factory-content > p {
+    color: #788880;
+    line-height: 1.8;
+    font-size: 14px;
+    margin-bottom: 40px;
+}
+
+.factory-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.feature-card {
+    background: #0f2620;
+    border: 1px solid #26342e;
+    border-radius: 8px;
+    padding: 30px;
+}
+
+.feature-card h4 {
+    color: var(--green);
+    font-size: 18px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.feature-card p {
+    color: #788880;
+    line-height: 1.6;
+    font-size: 13px;
+}
+
 .contact-grid {
     display: grid;
     grid-template-columns: .85fr 1.15fr;
@@ -3166,5 +3270,36 @@ footer[data-env="development"] .developer-credit {
         padding: 18px 0;
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+
+    .about-text h2 {
+        font-size: 32px;
+    }
+
+    .about-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .stat-item {
+        padding: 20px;
+    }
+
+    .stat-item strong {
+        font-size: 36px;
+    }
+
+    .factory-features {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .factory-content h2 {
+        font-size: 32px;
     }
 }
