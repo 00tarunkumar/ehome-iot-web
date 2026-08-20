@@ -2495,9 +2495,6 @@ footer {
     font: 10px 'DM Mono';
 }
 
-footer[data-env="development"] .developer-credit {
-    display: none !important;
-}
 
 .wifi-mark,
 .signal-mark {
