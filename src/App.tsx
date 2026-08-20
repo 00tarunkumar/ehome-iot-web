@@ -769,19 +769,19 @@ function About({ navigate }: { navigate: (page: Page) => void }) {
         </div>
         <div className="about-stats">
           <div className="stat-item">
-            <strong>8</strong>
+            <strong><Counter end={50} duration={2000} suffix="+" /></strong>
             <span>Products</span>
           </div>
           <div className="stat-item">
-            <strong>85</strong>
+            <strong><Counter end={500} duration={2000} suffix="+" /></strong>
             <span>Happy Customers</span>
           </div>
           <div className="stat-item">
-            <strong>1</strong>
+            <strong><Counter end={10} duration={2000} suffix="+" /></strong>
             <span>Services</span>
           </div>
           <div className="stat-item">
-            <strong>127</strong>
+            <strong><Counter end={750} duration={2000} suffix="+" /></strong>
             <span>Employees</span>
           </div>
         </div>
