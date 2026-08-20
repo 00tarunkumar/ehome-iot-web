@@ -79,7 +79,7 @@ button {
 }
 
 .header-inner {
-    height: 83px;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -174,7 +174,7 @@ button {
 }
 
 .hero {
-    height: 380px;
+    height: 630px;
     position: relative;
     overflow: hidden;
     background: #000;
@@ -543,7 +543,7 @@ em {
 }
 
 .trust-inner {
-    min-height: 76px;
+    min-height: 55px;
     display: flex;
     align-items: center;
     justify-content: space-between;
