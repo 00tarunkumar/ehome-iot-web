@@ -810,8 +810,6 @@ function About({ navigate }: { navigate: (page: Page) => void }) {
         </div>
       </div>
     </section>
-
-    <SupportBand navigate={navigate} />
   </main>;
 }
 
