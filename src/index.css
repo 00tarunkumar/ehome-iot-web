@@ -896,6 +896,16 @@ em {
     font-size: 17px;
 }
 
+
+.products-intro h1,
+.products-intro p {
+    color: white;
+}
+
+.products-intro .eyebrow {
+    color: var(--lime);
+}
+
 .product-browser {
     padding: 44px 0 110px;
 }
@@ -1883,14 +1893,6 @@ em {
     color: #adbbb3;
 }
 
-.products-intro {
-    background: linear-gradient(rgba(12, 23, 20, 0.85), rgba(12, 23, 20, 0.85)), url('/product_banner.jpg') no-repeat center center / cover;
-    color: white;
-}
-
-.products-intro p:not(.eyebrow) {
-    color: #adbbb3;
-}
 
 .about-intro {
     background: linear-gradient(rgba(12, 23, 20, 0.85), rgba(12, 23, 20, 0.85)), url('/ehome-iot-img/Factory View/img_1.jpeg') no-repeat center center / cover;
