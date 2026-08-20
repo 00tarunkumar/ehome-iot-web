@@ -754,7 +754,9 @@ function SupportBand({ navigate }: { navigate: (page: Page) => void }) {
 
 function Footer({ navigate }: { navigate: (page: Page) => void }) {
   const currentYear = new Date().getFullYear();
-  const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+  const isProduction = window.location.hostname !== 'localhost' &&
+                       window.location.hostname !== '127.0.0.1' &&
+                       window.location.hostname !== 'ehome-iot-web.vercel.app';
   console.log('Hostname:', window.location.hostname, 'isProduction:', isProduction);
   const socialLinks = [
     { icon: Youtube, url: "https://www.youtube.com/@ehoomenetworks/videos", label: "YouTube" },
