@@ -25,12 +25,23 @@ html {
 body {
     margin: 0;
     color: var(--ink);
-    background: #fff;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.80), rgba(255, 255, 255, 0.80)), url('/background.jpeg');
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center top;
     font-family: Manrope, sans-serif;
     font-size: 15px;
     line-height: 1.6;
 }
 
+main {
+    background: transparent;
+}
+
+section {
+    background: transparent;
+}
 
 button,
 input,
